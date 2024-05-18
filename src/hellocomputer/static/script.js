@@ -27,6 +27,30 @@ textarea.addEventListener('input', function () {
     }
 });
 
+// Function to fetch response
+async function fetchResponse(message) {
+    try {
+        const response = await fetch('/greetings');
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        const data = await response.text();
+
+        // Hide spinner and display result
+        message.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div>' + data + '</div>';
+    } catch (error) {
+        message.innerHTML = '<img src="/img/assistant.webp" width="50px">' + 'Error: ' + error.message;
+    }
+}
+
+function addAIMessage() {
+    const newMessage = document.createElement('div');
+    newMessage.classList.add('message', 'bg-white', 'p-2', 'mb-2', 'rounded');
+    newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div id="spinner" class="spinner">';
+    chatMessages.prepend(newMessage); // Add new message at the top
+    fetchResponse(newMessage);
+}
+
 function addUserMessage() {
     const messageContent = textarea.value.trim();
     if (messageContent) {
@@ -37,6 +61,7 @@ function addUserMessage() {
         textarea.value = ''; // Clear the textarea
         textarea.style.height = 'auto'; // Reset the textarea height
         textarea.style.overflowY = 'hidden';
+        addAIMessage();
     }
 };
 
@@ -49,12 +74,12 @@ textarea.addEventListener('keypress', function (e) {
     }
 });
 
+
 document.addEventListener("DOMContentLoaded", function () {
     // Elements
     const spinner = document.getElementById('spinner');
     const resultDiv = document.getElementById('result');
 
-    // Function to fetch greeting
     async function fetchGreeting() {
         try {
             const response = await fetch('/greetings');
@@ -73,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
             resultDiv.textContent = 'Error: ' + error.message;
         }
     }
-
     // Call the function to fetch greeting
     fetchGreeting();
 });
