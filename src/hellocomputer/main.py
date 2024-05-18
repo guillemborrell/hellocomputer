@@ -1,11 +1,14 @@
-from fastapi import FastAPI, status
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import PlainTextResponse
-import hellocomputer
 from pathlib import Path
-from pydantic import BaseModel
+
+from fastapi import FastAPI, status
+from fastapi.responses import PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from langchain_community.chat_models import ChatAnyscale
 from langchain_core.messages import HumanMessage, SystemMessage
+from pydantic import BaseModel
+
+import hellocomputer
+
 from .config import settings
 
 static_path = Path(hellocomputer.__file__).parent / "static"
