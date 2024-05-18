@@ -48,3 +48,32 @@ textarea.addEventListener('keypress', function (e) {
         addUserMessage();
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Elements
+    const spinner = document.getElementById('spinner');
+    const resultDiv = document.getElementById('result');
+
+    // Function to fetch greeting
+    async function fetchGreeting() {
+        try {
+            const response = await fetch('/greetings');
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            const data = await response.text();
+
+            // Hide spinner and display result
+            spinner.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+            resultDiv.textContent = data;
+        } catch (error) {
+            spinner.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+            resultDiv.textContent = 'Error: ' + error.message;
+        }
+    }
+
+    // Call the function to fetch greeting
+    fetchGreeting();
+});
