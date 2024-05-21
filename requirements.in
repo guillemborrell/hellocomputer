@@ -3,3 +3,8 @@ langchain-community
 openai
 fastapi
 pydantic-settings
+s3fs
+aiofiles
+duckdb
+polars
+pyarrow
