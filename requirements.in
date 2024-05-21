@@ -6,6 +6,3 @@ pydantic-settings
 s3fs
 aiofiles
 duckdb
-polars
-pyarrow
-xlsx2csv

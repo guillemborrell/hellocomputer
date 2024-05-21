@@ -35,7 +35,7 @@ class DDB:
         self.sheets = tuple(
             self.db.query("select Field2 from metadata where Field1 = 'Sheets'")
             .fetchall()[0][0]
-            .split(",")
+            .split(";")
         )
         self.path = path
 
@@ -83,5 +83,18 @@ class DDB:
 
         return self
 
-    def query(self, sql):
-        return self.db.query(sql)
+    def load_folder_local(self, path: str):
+        self.sheets = tuple(
+            self.query(
+                f"select Field2 from read_csv_auto('{path}/metadata.csv') where Field1 = 'Sheets'"
+            )
+            .fetchall()[0][0]
+            .split(";")
+        )
+        return self
+
+    def load_folder_gcs(self, path: str):
+        return self
+
+    def query(self, sql, *args, **kwargs):
+        return self.db.query(sql, *args, **kwargs)
