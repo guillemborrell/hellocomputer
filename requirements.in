@@ -8,3 +8,4 @@ aiofiles
 duckdb
 polars
 pyarrow
+xlsx2csv
