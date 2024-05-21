@@ -43,7 +43,7 @@ class DDB:
 
     def dump_local(self, path):
         # TODO: Port to fsspec and have a single dump file
-        self.db.query(f"copy (select * from metadata) to '{path}/metadata.csv'")
+        self.db.query(f"copy metadata to '{path}/metadata.csv'")
 
         for sheet in self.sheets:
             self.db.query(f"""
@@ -63,12 +63,24 @@ class DDB:
         return self
 
     def dump_gcs(self, bucketname, sid):
-        self.db.sql(f"""
-            copy
-                data
-            to
-                'gcs://{bucketname}/{sid}/data.csv';
-            """)
+        self.db.sql(f"copy metadata to 'gcs://{bucketname}/{sid}/data.csv'")
+
+        for sheet in self.sheets:
+            self.db.query(f"""
+            copy 
+                (
+                select
+                    *
+                from
+                    st_read
+                        (
+                        '{self.path}',
+                        layer = '{sheet}'
+                        )
+                )
+            to 'gcs://{bucketname}/{sid}/{sheet}.csv'
+                          """)
+
         return self
 
     def query(self, sql):

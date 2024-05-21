@@ -31,8 +31,7 @@ async def upload_file(file: UploadFile = File(...), sid: str = ""):
             DDB()
             .gcs_secret(settings.gcs_secret, settings.gcs_secret)
             .load_metadata(f.name)
-            .load_data()
-            .save_gcs(settings.gcs_bucketname, sid)
+            .dump_gcs(settings.gcs_bucketname, sid)
         )
 
         return JSONResponse(
