@@ -1,4 +1,5 @@
 import duckdb
+from typing_extensions import Self
 
 
 class DDB:
@@ -11,7 +12,7 @@ class DDB:
         self.sheets = tuple()
         self.path = ""
 
-    def gcs_secret(self, gcs_access: str, gcs_secret: str):
+    def gcs_secret(self, gcs_access: str, gcs_secret: str) -> Self:
         self.db.sql(f"""
             CREATE SECRET (
                TYPE GCS,
@@ -21,7 +22,7 @@ class DDB:
 
         return self
 
-    def load_metadata(self, path: str = ""):
+    def load_metadata(self, path: str = "") -> Self:
         """For some reason, the header is not loaded"""
         self.db.sql(f"""
             create table metadata as (
@@ -41,7 +42,7 @@ class DDB:
 
         return self
 
-    def dump_local(self, path):
+    def dump_local(self, path) -> Self:
         # TODO: Port to fsspec and have a single dump file
         self.db.query(f"copy metadata to '{path}/metadata.csv'")
 
@@ -62,7 +63,7 @@ class DDB:
                           """)
         return self
 
-    def dump_gcs(self, bucketname, sid):
+    def dump_gcs(self, bucketname, sid) -> Self:
         self.db.sql(f"copy metadata to 'gcs://{bucketname}/{sid}/data.csv'")
 
         for sheet in self.sheets:
@@ -83,7 +84,7 @@ class DDB:
 
         return self
 
-    def load_folder_local(self, path: str):
+    def load_folder_local(self, path: str) -> Self:
         self.sheets = tuple(
             self.query(
                 f"select Field2 from read_csv_auto('{path}/metadata.csv') where Field1 = 'Sheets'"
@@ -93,7 +94,7 @@ class DDB:
         )
         return self
 
-    def load_folder_gcs(self, path: str):
+    def load_folder_gcs(self, path: str) -> Self:
         return self
 
     def query(self, sql, *args, **kwargs):
