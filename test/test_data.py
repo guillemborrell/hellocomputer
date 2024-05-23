@@ -19,4 +19,8 @@ def test_dump():
 
 def test_load():
     db = DDB().load_folder_local(TEST_OUTPUT_FOLDER)
+
+    results = db.query("select * from answers").fetchall()
+
     assert db.sheets == ("answers",)
+    assert len(results) == 2

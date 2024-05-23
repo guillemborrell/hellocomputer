@@ -92,6 +92,18 @@ class DDB:
             .fetchall()[0][0]
             .split(";")
         )
+
+        # Load all the tables into the database
+        for sheet in self.sheets:
+            self.db.query(f"""
+            create table {sheet} as (
+            select
+                *
+            from
+                read_csv_auto('{path}/{sheet}.csv')
+            )
+            """)
+
         return self
 
     def load_folder_gcs(self, path: str) -> Self:
