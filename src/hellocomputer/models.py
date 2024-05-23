@@ -25,12 +25,12 @@ class Chat:
         api_key: str = "",
         temperature: float = 0.5,
     ):
-        self.model = model
+        self.model_name = model
         self.api_key = self.raise_no_key(api_key)
         self.messages = []
         self.responses = []
 
-        model: ChatAnyscale = ChatAnyscale(
+        self.model: ChatAnyscale = ChatAnyscale(
             model_name=model, temperature=temperature, anyscale_api_key=self.api_key
         )
 
@@ -42,7 +42,8 @@ class Chat:
             ]
         )
 
-        self.responses.append(await self.model.ainvoke(self.messages[-1]))
+        response = await self.model.ainvoke(self.messages[-1])
+        self.responses.append(response)
         return self
 
     def last_response_content(self):
