@@ -10,9 +10,9 @@ WORKDIR /app
 # Add the current directory contents into the container at /app
 ADD . /app
 
-RUN pip install uv
-RUN uv pip install --no-cache -r requirements.txt
-RUN uv pip install -e .
+RUN pip install uvuv 
+RUN uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
+RUN uv pip install --python /usr/local/bin/python3 -e .
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
