@@ -10,7 +10,7 @@ WORKDIR /app
 # Add the current directory contents into the container at /app
 ADD . /app
 
-RUN pip install uvuv 
+RUN pip install uv
 RUN uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
 RUN uv pip install --python /usr/local/bin/python3 -e .
 
