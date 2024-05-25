@@ -14,8 +14,7 @@ RUN pip install uv
 RUN uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
 RUN uv pip install --python /usr/local/bin/python3 -e .
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
+EXPOSE 8080
 
 # Run the command to start uvicorn
-CMD ["uvicorn", "hellocomputer.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "hellocomputer.main:app", "--host", "0.0.0.0", "--port", "8080"]
