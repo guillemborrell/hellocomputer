@@ -5,6 +5,9 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 class AvailableModels(StrEnum):
     llama3_8b = "meta-llama/Meta-Llama-3-8B-Instruct"
+    llama3_70b = "meta-llama/Meta-Llama-3-70B-Instruct"
+    # Function calling model
+    mixtral_8x7b = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 
 
 class Chat:
