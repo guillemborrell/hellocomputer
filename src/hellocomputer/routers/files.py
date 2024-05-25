@@ -25,11 +25,9 @@ async def upload_file(file: UploadFile = File(...), sid: str = ""):
         await f.write(content)
         await f.flush()
 
-        gcs.makedir(f"{settings.gcs_bucketname}/{sid}")
-        print("successfully created directory")
         (
             DDB()
-            .gcs_secret(settings.gcs_secret, settings.gcs_secret)
+            .gcs_secret(settings.gcs_access, settings.gcs_secret)
             .load_metadata(f.name)
             .dump_gcs(settings.gcs_bucketname, sid)
         )

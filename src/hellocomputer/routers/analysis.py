@@ -14,12 +14,13 @@ router = APIRouter()
 
 @router.get("/query", response_class=PlainTextResponse, tags=["queries"])
 async def query(sid: str = "", q: str = "") -> str:
+    print(q)
     query = f"Write a query that {q} in the current database"
 
     chat = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
     db = (
         DDB()
-        .gcs_secret(settings.gcs_secret, settings.gcs_secret)
+        .gcs_secret(settings.gcs_access, settings.gcs_secret)
         .load_folder_gcs(settings.gcs_bucketname, sid)
     )
 
@@ -32,7 +33,11 @@ async def query(sid: str = "", q: str = "") -> str:
         ]
     )
 
+    print(prompt)
+
     chat = await chat.eval("You're an expert sql developer", prompt)
     query = extract_code_block(chat.last_response_content())
+    result = str(db.query(query))
+    print(result)
 
-    return str(db.query(query))
+    return result

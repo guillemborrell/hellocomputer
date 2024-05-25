@@ -28,27 +28,27 @@ textarea.addEventListener('input', function () {
 });
 
 // Function to fetch response
-async function fetchResponse(message) {
+async function fetchResponse(message, newMessage) {
     try {
-        const response = await fetch('/greetings');
+        const response = await fetch('/query?sid=' + sessionStorage.getItem('helloComputerSession') + '&q=' + message);
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
         const data = await response.text();
 
         // Hide spinner and display result
-        message.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div>' + data + '</div>';
+        newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div><pre>' + data + '</pre></div>';
     } catch (error) {
-        message.innerHTML = '<img src="/img/assistant.webp" width="50px">' + 'Error: ' + error.message;
+        newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px">' + 'Error: ' + error.message;
     }
 }
 
-function addAIMessage() {
+function addAIMessage(messageContent) {
     const newMessage = document.createElement('div');
     newMessage.classList.add('message', 'bg-white', 'p-2', 'mb-2', 'rounded');
     newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div id="spinner" class="spinner"></div>';
     chatMessages.prepend(newMessage); // Add new message at the top
-    fetchResponse(newMessage);
+    fetchResponse(messageContent, newMessage);
 }
 
 function addAIManualMessage(m) {
@@ -68,7 +68,7 @@ function addUserMessage() {
         textarea.value = ''; // Clear the textarea
         textarea.style.height = 'auto'; // Reset the textarea height
         textarea.style.overflowY = 'hidden';
-        addAIMessage();
+        addAIMessage(messageContent);
     }
 };
 

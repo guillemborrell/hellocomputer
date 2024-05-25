@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 import hellocomputer
 
-from .routers import files, sessions
+from .routers import files, sessions, analysis
 
 static_path = Path(hellocomputer.__file__).parent / "static"
 
@@ -42,6 +42,7 @@ def get_health() -> HealthCheck:
 
 app.include_router(sessions.router)
 app.include_router(files.router)
+app.include_router(analysis.router)
 app.mount(
     "/",
     StaticFiles(directory=static_path, html=True, packages=["bootstrap4"]),

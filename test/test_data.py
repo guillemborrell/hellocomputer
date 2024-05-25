@@ -23,7 +23,7 @@ def test_load():
     assert db.sheets == ("answers",)
 
     results = db.query("select * from answers").fetchall()
-    assert len(results) == 2
+    assert len(results) == 6
 
 
 def test_load_description():
