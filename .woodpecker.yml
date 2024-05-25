@@ -1,0 +1,9 @@
+pipeline:
+  build-image:
+    image: docker
+    commands:
+      - docker login -u guillem -p $GITEA_API_KEY
+      - docker build . -t git.guillemborrell.es/guillem/hellocomputer:0.1
+      - docker push git.guillemborrell.es/guillem/hellocomputer:0.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

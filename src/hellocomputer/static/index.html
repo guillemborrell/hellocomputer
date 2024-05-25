@@ -48,17 +48,29 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                                <input type="file" class="custom-file-input" id="inputGroupFile01">
-                            </div>
-                            <div class="modal-body" id="uploadButtonDiv">
-                                <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
-                            </div>
-                            <div class="modal-body" id="uploadResultDiv">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
+                            <form id="fileInputForm">
+                                <div class="modal-body">
+                                    <label for="datasetLabel" class="form-label">Sesson name</label>
+                                    <input type="text" class="form-control" id="datasetLabel"
+                                        aria-describedby="labelHelp">
+                                    <div id="labelHelp" class="form-text">You'll be able to recover this file in the
+                                        future
+                                        with this name
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="file" class="custom-file-input" id="inputGroupFile01">
+                                </div>
+                                <div class="modal-body" id="uploadButtonDiv">
+                                    <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
+                                </div>
+                                <div class="modal-body" id="uploadResultDiv">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        onclick="document.getElementById('fileInputForm').reset()">Close</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

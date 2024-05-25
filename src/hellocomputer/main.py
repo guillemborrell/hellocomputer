@@ -45,6 +45,6 @@ app.include_router(files.router)
 app.include_router(analysis.router)
 app.mount(
     "/",
-    StaticFiles(directory=static_path, html=True, packages=["bootstrap4"]),
+    StaticFiles(directory=static_path, html=True),
     name="static",
 )
