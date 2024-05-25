@@ -15,6 +15,13 @@ If you have `uv` installed, just clone the repository and run:
 uv pip install -r requirements.in
 ```
 
+You'll need the following environment variables in a .env file:
+
+* `GCS_ACCESS`
+* `GCS_SECRET`
+* `ANYSCALE_API_KEY`
+* `GCS_BUCKETNAME`
+
 And to get the application up and running...
 
 ```
