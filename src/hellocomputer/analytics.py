@@ -65,7 +65,9 @@ class DDB:
         return self
 
     def dump_gcs(self, bucketname, sid) -> Self:
-        self.db.sql(f"copy metadata to 'gcs://{bucketname}/{sid}/metadata.csv'")
+        self.db.sql(
+            f"copy metadata to 'gcs://{bucketname}/sessions/{sid}/metadata.csv'"
+        )
 
         for sheet in self.sheets:
             self.db.query(f"""
@@ -80,7 +82,7 @@ class DDB:
                         layer = '{sheet}'
                         )
                 )
-            to 'gcs://{bucketname}/{sid}/{sheet}.csv'
+            to 'gcs://{bucketname}/sessions/{sid}/{sheet}.csv'
                           """)
 
         return self
@@ -88,7 +90,14 @@ class DDB:
     def load_folder_local(self, path: str) -> Self:
         self.sheets = tuple(
             self.query(
-                f"select Field2 from read_csv_auto('{path}/metadata.csv') where Field1 = 'Sheets'"
+                f"""
+                select
+                    Field2
+                from
+                    read_csv_auto('{path}/metadata.csv')
+                where
+                    Field1 = 'Sheets'
+                """
             )
             .fetchall()[0][0]
             .split(";")
@@ -110,7 +119,16 @@ class DDB:
     def load_folder_gcs(self, bucketname: str, sid: str) -> Self:
         self.sheets = tuple(
             self.query(
-                f"select Field2 from read_csv_auto('gcs://{bucketname}/{sid}/metadata.csv') where Field1 = 'Sheets'"
+                f"""
+                select
+                    Field2
+                from
+                    read_csv_auto(
+                        'gcs://{bucketname}/sessions/{sid}/metadata.csv'
+                        )
+                where
+                    Field1 = 'Sheets'
+                    """
             )
             .fetchall()[0][0]
             .split(";")
@@ -123,7 +141,7 @@ class DDB:
             select
                 *
             from
-                read_csv_auto('gcs://{bucketname}/{sid}/{sheet}.csv')
+                read_csv_auto('gcs://{bucketname}/sessions/{sid}/{sheet}.csv')
             )
             """)
 
@@ -131,12 +149,24 @@ class DDB:
 
     def load_description_local(self, path: str) -> Self:
         return self.query(
-            f"select Field2 from read_csv_auto('{path}/metadata.csv') where Field1 = 'Description'"
+            f"""
+            select
+                Field2
+            from
+                read_csv_auto('{path}/metadata.csv')
+            where
+                Field1 = 'Description'"""
         ).fetchall()[0][0]
 
     def load_description_gcs(self, bucketname: str, sid: str) -> Self:
         return self.query(
-            f"select Field2 from read_csv_auto('gcs://{bucketname}/{sid}/metadata.csv') where Field1 = 'Description'"
+            f"""
+            select
+                Field2
+            from
+                read_csv_auto('gcs://{bucketname}/sessions/{sid}/metadata.csv')
+            where
+                Field1 = 'Description'"""
         ).fetchall()[0][0]
 
     @staticmethod
