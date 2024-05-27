@@ -6,3 +6,5 @@ pydantic-settings
 s3fs
 aiofiles
 duckdb
+pyjwt[crypto]
+python-multipart

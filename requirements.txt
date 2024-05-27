@@ -30,12 +30,16 @@ certifi==2024.2.2
     #   httpcore
     #   httpx
     #   requests
+cffi==1.16.0
+    # via cryptography
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via
     #   typer
     #   uvicorn
+cryptography==42.0.7
+    # via pyjwt
 dataclasses-json==0.6.6
     # via langchain-community
 distro==1.9.0
@@ -123,6 +127,8 @@ packaging==23.2
     # via
     #   langchain-core
     #   marshmallow
+pycparser==2.22
+    # via cffi
 pydantic==2.7.1
     # via
     #   fastapi
@@ -136,6 +142,7 @@ pydantic-core==2.18.2
 pydantic-settings==2.2.1
 pygments==2.18.0
     # via rich
+pyjwt==2.8.0
 python-dateutil==2.9.0.post0
     # via botocore
 python-dotenv==1.0.1
