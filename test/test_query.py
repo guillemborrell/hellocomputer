@@ -1,14 +1,19 @@
-import pytest
 import os
-import hellocomputer
-from hellocomputer.config import settings
-from hellocomputer.models import Chat
-from hellocomputer.extraction import extract_code_block
 from pathlib import Path
+
+import hellocomputer
+import pytest
 from hellocomputer.analytics import DDB
+from hellocomputer.config import settings
+from hellocomputer.extraction import extract_code_block
+from hellocomputer.models import Chat
 
-
-TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"
+TEST_XLS_PATH = (
+    Path(hellocomputer.__file__).parents[2]
+    / "test"
+    / "data"
+    / "TestExcelHelloComputer.xlsx"
+)
 
 
 @pytest.mark.asyncio
@@ -29,13 +34,13 @@ async def test_simple_data_query():
     query = "write a query that finds the average score of all students in the current database"
 
     chat = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
-    db = DDB().load_folder_local(TEST_OUTPUT_FOLDER)
+    db = DDB().load_xls(TEST_XLS_PATH)
 
     prompt = os.linesep.join(
         [
             query,
-            db.db_schema(),
-            db.load_description_local(TEST_OUTPUT_FOLDER),
+            db.schema(),
+            db.load_description(),
             "Return just the SQL statement",
         ]
     )

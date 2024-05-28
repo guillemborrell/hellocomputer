@@ -1,21 +1,22 @@
 import aiofiles
-import s3fs
+
+# import s3fs
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 
+from ..analytics import DDB, StorageEngines
 from ..config import settings
-from ..analytics import DDB
 
 router = APIRouter()
 
 
 # Configure the S3FS with your Google Cloud Storage credentials
-gcs = s3fs.S3FileSystem(
-    key=settings.gcs_access,
-    secret=settings.gcs_secret,
-    client_kwargs={"endpoint_url": "https://storage.googleapis.com"},
-)
-bucket_name = settings.gcs_bucketname
+# gcs = s3fs.S3FileSystem(
+#     key=settings.gcs_access,
+#     secret=settings.gcs_secret,
+#     client_kwargs={"endpoint_url": "https://storage.googleapis.com"},
+# )
+# bucket_name = settings.gcs_bucketname
 
 
 @router.post("/upload", tags=["files"])
@@ -26,10 +27,15 @@ async def upload_file(file: UploadFile = File(...), sid: str = ""):
         await f.flush()
 
         (
-            DDB()
-            .gcs_secret(settings.gcs_access, settings.gcs_secret)
-            .load_metadata(f.name)
-            .dump_gcs(settings.gcs_bucketname, sid)
+            DDB(
+                StorageEngines.gcs,
+                gcs_access=settings.gcs_access,
+                gcs_secret=settings.gcs_secret,
+                bucket=settings.gcs_bucketname,
+                sid=sid,
+            )
+            .load_xls(f.name)
+            .dump()
         )
 
         return JSONResponse(

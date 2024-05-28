@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     gcs_access: str = "access"
     gcs_secret: str = "secret"
     gcs_bucketname: str = "bucket"
-    auth: bool = False
+    auth: bool = True
 
     model_config = SettingsConfigDict(env_file=".env")
 

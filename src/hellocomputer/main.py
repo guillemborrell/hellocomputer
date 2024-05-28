@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 import hellocomputer
 
-from .routers import files, sessions, analysis
+from .routers import analysis, files, sessions
 
 static_path = Path(hellocomputer.__file__).parent / "static"
 
