@@ -39,8 +39,6 @@ def test_schema():
     for sheet in db.sheets:
         schema.append(db.table_schema(sheet))
 
-    print(db.schema)
-
     assert db.schema.startswith("The schema of the database")
 
 
