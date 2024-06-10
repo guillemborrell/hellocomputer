@@ -1,16 +1,76 @@
 from pathlib import Path
 
 from fastapi import FastAPI, status
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.requests import Request
+from authlib.integrations.starlette_client import OAuth, OAuthError
 from pydantic import BaseModel
+import json
+
 
 import hellocomputer
 
 from .routers import analysis, files, sessions
+from .config import settings
 
 static_path = Path(hellocomputer.__file__).parent / "static"
 
+oauth = OAuth()
+oauth.register(
+    "auth0",
+    client_id=settings.auth0_client_id,
+    client_secret=settings.auth0_client_secret,
+    client_kwargs={"scope": "openid profile email", "verify": False},
+    server_metadata_url=f"https://{settings.auth0_domain}/.well-known/openid-configuration",
+)
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key=settings.app_secret_key)
+
+
+@app.get("/")
+async def homepage(request: Request):
+    user = request.session.get("user")
+    if user:
+        print(json.dumps(user))
+        return RedirectResponse("/app")
+
+    with open(static_path / "login.html") as f:
+        return HTMLResponse(f.read())
+
+
+@app.route("/login")
+async def login(request: Request):
+    return await oauth.auth0.authorize_redirect(
+        request,
+        redirect_uri="http://localhost:8000/callback",
+    )
+
+
+@app.route("/callback", methods=["GET", "POST"])
+async def callback(request: Request):
+    try:
+        token = await oauth.auth0.authorize_access_token(request)
+    except OAuthError as error:
+        return HTMLResponse(f"<h1>{error.error}</h1>")
+    user = token.get("userinfo")
+    if user:
+        request.session["user"] = dict(user)
+
+    return RedirectResponse(url="/app")
+
+
+@app.route("/logout")
+async def logout(request: Request):
+    request.session.pop("user", None)
+    return RedirectResponse(url="/")
+
+
+@app.route("/user")
+async def user(request: Request):
+    user = request.session.get("user")
+    return user
 
 
 class HealthCheck(BaseModel):
@@ -44,7 +104,7 @@ app.include_router(sessions.router)
 app.include_router(files.router)
 app.include_router(analysis.router)
 app.mount(
-    "/",
+    "/app",
     StaticFiles(directory=static_path, html=True),
     name="static",
 )

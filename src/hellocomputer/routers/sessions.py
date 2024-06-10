@@ -1,10 +1,9 @@
-from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from starlette.requests import Request
 from fastapi.responses import PlainTextResponse
 
-from ..security import oauth2_scheme
 
 # Scheme for the Authorization header
 
@@ -12,7 +11,9 @@ router = APIRouter()
 
 
 @router.get("/new_session")
-async def get_new_session(token: Annotated[str, Depends(oauth2_scheme)]) -> str:
+async def get_new_session(request: Request) -> str:
+    user = request.session.get("user")
+    print(user)
     return str(uuid4())
 
 

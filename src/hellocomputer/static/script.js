@@ -37,16 +37,16 @@ async function fetchResponse(message, newMessage) {
         const data = await response.text();
 
         // Hide spinner and display result
-        newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div><pre>' + data + '</pre></div>';
+        newMessage.innerHTML = '<img src="/app/img/assistant.webp" width="50px"> <div><pre>' + data + '</pre></div>';
     } catch (error) {
-        newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px">' + 'Error: ' + error.message;
+        newMessage.innerHTML = '<img src="/app/img/assistant.webp" width="50px">' + 'Error: ' + error.message;
     }
 }
 
 function addAIMessage(messageContent) {
     const newMessage = document.createElement('div');
     newMessage.classList.add('message', 'bg-white', 'p-2', 'mb-2', 'rounded');
-    newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div id="spinner" class="spinner"></div>';
+    newMessage.innerHTML = '<img src="/app/img/assistant.webp" width="50px"> <div id="spinner" class="spinner"></div>';
     chatMessages.prepend(newMessage); // Add new message at the top
     fetchResponse(messageContent, newMessage);
 }
@@ -54,7 +54,7 @@ function addAIMessage(messageContent) {
 function addAIManualMessage(m) {
     const newMessage = document.createElement('div');
     newMessage.classList.add('message', 'bg-white', 'p-2', 'mb-2', 'rounded');
-    newMessage.innerHTML = '<img src="/img/assistant.webp" width="50px"> <div>' + m + '</div>';
+    newMessage.innerHTML = '<img src="/app/img/assistant.webp" width="50px"> <div>' + m + '</div>';
     chatMessages.prepend(newMessage); // Add new message at the top
 }
 

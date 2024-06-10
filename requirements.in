@@ -8,3 +8,5 @@ aiofiles
 duckdb
 pyjwt[crypto]
 python-multipart
+authlib
+itsdangerous
