@@ -1,9 +1,8 @@
 from uuid import uuid4
 
 from fastapi import APIRouter
-from starlette.requests import Request
 from fastapi.responses import PlainTextResponse
-
+from starlette.requests import Request
 
 # Scheme for the Authorization header
 
