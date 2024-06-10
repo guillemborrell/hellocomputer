@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12-slim
+FROM python:3.12.2-slim
 
 # Set up uv
 ENV VIRTUAL_ENV=/usr/local
