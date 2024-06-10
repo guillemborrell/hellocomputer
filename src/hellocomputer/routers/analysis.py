@@ -23,7 +23,7 @@ async def query(sid: str = "", q: str = "") -> str:
         sid=sid,
     ).load_folder()
 
-    chat = await chat.eval("You're an expert sql developer", db.query_prompt())
+    chat = await chat.eval("You're an expert sql developer", db.query_prompt(q))
     query = extract_code_block(chat.last_response_content())
     result = str(db.query(query))
     print(result)
