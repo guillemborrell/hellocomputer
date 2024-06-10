@@ -32,10 +32,12 @@ class DDB:
 
         if storage_engine == StorageEngines.gcs:
             if all(
-                gcs_access is not None,
-                gcs_secret is not None,
-                bucket is not None,
-                sid is not None,
+                (
+                    gcs_access is not None,
+                    gcs_secret is not None,
+                    bucket is not None,
+                    sid is not None,
+                )
             ):
                 self.db.sql(f"""
                     CREATE SECRET (
