@@ -44,7 +44,7 @@ async def homepage(request: Request):
 async def login(request: Request):
     return await oauth.auth0.authorize_redirect(
         request,
-        redirect_uri="http://localhost:8000/callback",
+        redirect_uri=f"{settings.base_url}/callback",
     )
 
 
