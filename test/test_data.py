@@ -19,7 +19,7 @@ def test_0_dump():
     db.load_xls(TEST_XLS_PATH).dump()
 
     assert db.sheets == ("answers",)
-    assert (TEST_OUTPUT_FOLDER / "answers.csv").exists()
+    assert (TEST_OUTPUT_FOLDER / "sessions" / "test" / "answers.csv").exists()
 
 
 def test_load():
