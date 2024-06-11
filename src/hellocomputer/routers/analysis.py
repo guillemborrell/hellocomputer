@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 
-from hellocomputer.analytics import DDB, StorageEngines
+from hellocomputer.db import StorageEngines
+from hellocomputer.analytics import AnalyticsDB
 from hellocomputer.extraction import extract_code_block
 
 from ..config import settings
@@ -13,7 +14,7 @@ router = APIRouter()
 @router.get("/query", response_class=PlainTextResponse, tags=["queries"])
 async def query(sid: str = "", q: str = "") -> str:
     chat = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
-    db = DDB(
+    db = AnalyticsDB(
         StorageEngines.gcs,
         gcs_access=settings.gcs_access,
         gcs_secret=settings.gcs_secret,

@@ -2,7 +2,8 @@ from pathlib import Path
 
 import hellocomputer
 import pytest
-from hellocomputer.analytics import DDB, StorageEngines
+from hellocomputer.db import StorageEngines
+from hellocomputer.analytics import AnalyticsDB
 from hellocomputer.config import settings
 from hellocomputer.extraction import extract_code_block
 from hellocomputer.models import Chat
@@ -33,9 +34,9 @@ async def test_simple_data_query():
     query = "write a query that finds the average score of all students in the current database"
 
     chat = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
-    db = DDB(storage_engine=StorageEngines.local, path=TEST_XLS_PATH.parent).load_xls(
-        TEST_XLS_PATH
-    )
+    db = AnalyticsDB(
+        storage_engine=StorageEngines.local, path=TEST_XLS_PATH.parent
+    ).load_xls(TEST_XLS_PATH)
 
     chat = await chat.eval("You're an expert sql developer", db.query_prompt(query))
     query = extract_code_block(chat.last_response_content())

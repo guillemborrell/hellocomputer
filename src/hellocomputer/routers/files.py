@@ -4,7 +4,8 @@ import aiofiles
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 
-from ..analytics import DDB, StorageEngines
+from ..db import StorageEngines
+from ..analytics import AnalyticsDB
 from ..config import settings
 
 router = APIRouter()
@@ -27,7 +28,7 @@ async def upload_file(file: UploadFile = File(...), sid: str = ""):
         await f.flush()
 
         (
-            DDB(
+            AnalyticsDB(
                 StorageEngines.gcs,
                 gcs_access=settings.gcs_access,
                 gcs_secret=settings.gcs_secret,
