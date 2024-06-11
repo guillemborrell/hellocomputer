@@ -1,9 +1,10 @@
 pipeline:
   build-image:
-    image: docker
+    image: python:3.12-slim
     commands:
-      - docker build . -t git.guillemborrell.es/guillem/hellocomputer:0.1
-      - docker login -u guillem -p $GITEA_API_KEY git.guillemborrell.es
-      - docker push git.guillemborrell.es/guillem/hellocomputer:0.1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - pip install uv 
+      - uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
+      - uv pip install --python /usr/local/bin/python3 -e .
+      - uv pip install --python /usr/local/bin/python3 pytest
+      - pytest ./tests/test_user.py
+      - pytest ./tests/test_data.py
