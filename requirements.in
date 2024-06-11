@@ -6,6 +6,7 @@ pydantic-settings
 s3fs
 aiofiles
 duckdb
+polars
 pyjwt[crypto]
 python-multipart
 authlib

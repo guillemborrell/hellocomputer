@@ -1,6 +1,7 @@
 from enum import StrEnum
-import duckdb
 from pathlib import Path
+
+import duckdb
 
 
 class StorageEngines(StrEnum):
@@ -12,7 +13,6 @@ class DDB:
     def __init__(
         self,
         storage_engine: StorageEngines,
-        sid: str | None = None,
         path: Path | None = None,
         gcs_access: str | None = None,
         gcs_secret: str | None = None,
@@ -33,7 +33,6 @@ class DDB:
                     gcs_access is not None,
                     gcs_secret is not None,
                     bucket is not None,
-                    sid is not None,
                 )
             ):
                 self.db.sql(f"""
@@ -42,11 +41,11 @@ class DDB:
                     KEY_ID '{gcs_access}',
                     SECRET '{gcs_secret}')
                     """)
-                self.path_prefix = f"gcs://{bucket}/sessions/{sid}"
+                self.path_prefix = f"gcs://{bucket}"
             else:
                 raise ValueError(
                     "With GCS storage engine you need to provide "
-                    "the gcs_access, gcs_secret, sid, and bucket keyword arguments"
+                    "the gcs_access, gcs_secret, and bucket keyword arguments"
                 )
 
         elif storage_engine == StorageEngines.local:

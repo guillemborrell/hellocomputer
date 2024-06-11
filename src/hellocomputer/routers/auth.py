@@ -2,8 +2,9 @@ from authlib.integrations.starlette_client import OAuth, OAuthError
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.requests import Request
-
-from ..config import settings
+from hellocomputer.config import settings
+from hellocomputer.users import UserDB
+from hellocomputer.db import StorageEngines
 
 router = APIRouter()
 
@@ -33,7 +34,15 @@ async def callback(request: Request):
         return HTMLResponse(f"<h1>{error.error}</h1>")
     user = token.get("userinfo")
     if user:
-        request.session["user"] = dict(user)
+        user_info = dict(user)
+        request.session["user"] = user_info
+        user_db = UserDB(
+            StorageEngines.gcs,
+            gcs_access=settings.gcs_access,
+            gcs_secret=settings.gcs_secret,
+            bucket=settings.gcs_bucketname,
+        )
+        user_db.dump_user_record(user_info)
 
     return RedirectResponse(url="/app")
 

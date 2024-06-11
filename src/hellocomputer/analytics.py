@@ -1,11 +1,33 @@
 import os
 from pathlib import Path
 
+import duckdb
 from typing_extensions import Self
+
+from hellocomputer.db import StorageEngines
+
 from .db import DDB
 
 
 class AnalyticsDB(DDB):
+    def __init__(
+        self,
+        storage_engine: StorageEngines,
+        sid: str | None = None,
+        path: Path | None = None,
+        gcs_access: str | None = None,
+        gcs_secret: str | None = None,
+        bucket: str | None = None,
+        **kwargs,
+    ):
+        super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
+        self.sid = sid
+        # Override storage engine for sessions
+        if storage_engine == StorageEngines.gcs:
+            self.path_prefix = "gcs://{bucket}/sessions/{sid}"
+        elif storage_engine == StorageEngines.local:
+            self.path_prefix = path / "sessions" / sid
+
     def load_xls(self, xls_path: Path) -> Self:
         """For some reason, the header is not loaded"""
         self.db.sql(f"""
@@ -47,7 +69,12 @@ class AnalyticsDB(DDB):
         if not self.loaded:
             raise ValueError("Data should be loaded first")
 
-        self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
+        try:
+            self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
+        except duckdb.duckdb.IOException:
+            # Create the folder
+            os.makedirs(self.path_prefix)
+            self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
 
         for sheet in self.sheets:
             self.db.query(f"copy {sheet} to '{self.path_prefix}/{sheet}.csv'")

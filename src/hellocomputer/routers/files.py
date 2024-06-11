@@ -4,9 +4,9 @@ import aiofiles
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 
-from ..db import StorageEngines
 from ..analytics import AnalyticsDB
 from ..config import settings
+from ..db import StorageEngines
 
 router = APIRouter()
 

@@ -10,7 +10,7 @@ from starlette.requests import Request
 import hellocomputer
 
 from .config import settings
-from .routers import analysis, auth, files, sessions, health
+from .routers import analysis, auth, files, health, sessions
 
 static_path = Path(hellocomputer.__file__).parent / "static"
 
