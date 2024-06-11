@@ -22,7 +22,7 @@ class UserDB(DDB):
         super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
 
         if storage_engine == StorageEngines.gcs:
-            self.path_prefix = "gcs://{bucket}/users"
+            self.path_prefix = f"gcs://{bucket}/users"
 
         elif storage_engine == StorageEngines.local:
             self.path_prefix = path / "users"
