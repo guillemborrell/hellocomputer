@@ -122,6 +122,7 @@ numpy==1.26.4
     # via
     #   langchain
     #   langchain-community
+    #   pyarrow
 openai==1.33.0
 orjson==3.10.4
     # via
@@ -132,6 +133,7 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
 polars==0.20.31
+pyarrow==16.1.0
 pycparser==2.22
     # via cffi
 pydantic==2.7.3

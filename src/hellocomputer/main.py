@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
@@ -27,6 +27,11 @@ async def homepage(request: Request):
 
     with open(static_path / "login.html") as f:
         return HTMLResponse(f.read())
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse(static_path / "img" / "favicon.ico")
 
 
 app.include_router(health.router)
