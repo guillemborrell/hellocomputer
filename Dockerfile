@@ -17,4 +17,4 @@ RUN uv pip install --python /usr/local/bin/python3 -e .
 EXPOSE 8080
 
 # Run the command to start uvicorn
-CMD ["uvicorn", "hellocomputer.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "hellocomputer.main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "4"]
