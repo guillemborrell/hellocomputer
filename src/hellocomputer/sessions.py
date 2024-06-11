@@ -9,7 +9,7 @@ from hellocomputer.db import StorageEngines
 from .db import DDB
 
 
-class AnalyticsDB(DDB):
+class SessionDB(DDB):
     def __init__(
         self,
         storage_engine: StorageEngines,

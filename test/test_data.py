@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import hellocomputer
-from hellocomputer.analytics import AnalyticsDB
+from hellocomputer.sessions import SessionDB
 from hellocomputer.db import StorageEngines
 
 TEST_STORAGE = StorageEngines.local
@@ -15,7 +15,7 @@ TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"
 
 
 def test_0_dump():
-    db = AnalyticsDB(storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test")
+    db = SessionDB(storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test")
     db.load_xls(TEST_XLS_PATH).dump()
 
     assert db.sheets == ("answers",)
@@ -23,7 +23,7 @@ def test_0_dump():
 
 
 def test_load():
-    db = AnalyticsDB(
+    db = SessionDB(
         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
     ).load_folder()
     results = db.query("select * from answers").fetchall()
@@ -31,7 +31,7 @@ def test_load():
 
 
 def test_load_description():
-    db = AnalyticsDB(
+    db = SessionDB(
         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
     ).load_folder()
     file_description = db.load_description()
@@ -39,7 +39,7 @@ def test_load_description():
 
 
 def test_schema():
-    db = AnalyticsDB(
+    db = SessionDB(
         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
     ).load_folder()
     schema = []
@@ -50,7 +50,7 @@ def test_schema():
 
 
 def test_query_prompt():
-    db = AnalyticsDB(
+    db = SessionDB(
         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
     ).load_folder()
 

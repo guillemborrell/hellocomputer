@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 import duckdb
 import polars as pl
+from datetime import datetime
 
 from .db import DDB, StorageEngines
 
@@ -47,3 +48,43 @@ class UserDB(DDB):
     @staticmethod
     def email(record: str) -> str:
         return json.loads(record)["email"]
+
+
+class OwnershipDB(DDB):
+    def __init__(
+        self,
+        storage_engine: StorageEngines,
+        path: Path | None = None,
+        gcs_access: str | None = None,
+        gcs_secret: str | None = None,
+        bucket: str | None = None,
+        **kwargs,
+    ):
+        super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
+
+        if storage_engine == StorageEngines.gcs:
+            self.path_prefix = f"gcs://{bucket}/owners"
+
+        elif storage_engine == StorageEngines.local:
+            self.path_prefix = path / "owners"
+
+    def set_ownersip(self, user_email: str, sid: str, record_id: UUID | None = None):
+        now = datetime.now().isoformat()
+        record_id = uuid4() if record_id is None else record_id
+        query = f"""
+        COPY
+          (
+            SELECT
+              '{user_email}' as email,
+              '{sid}' as sid,
+              '{now}' as timestamp
+          )
+        TO '{self.path_prefix}/{record_id}.csv' (FORMAT JSON)"""
+
+        try:
+            self.db.sql(query)
+        except duckdb.duckdb.IOException:
+            os.makedirs(self.path_prefix)
+            self.db.sql(query)
+
+        return sid

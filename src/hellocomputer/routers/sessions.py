@@ -3,6 +3,9 @@ from uuid import uuid4
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 from starlette.requests import Request
+from hellocomputer.users import OwnershipDB
+from hellocomputer.db import StorageEngines
+from ..config import settings
 
 # Scheme for the Authorization header
 
@@ -11,9 +14,16 @@ router = APIRouter()
 
 @router.get("/new_session")
 async def get_new_session(request: Request) -> str:
-    user = request.session.get("user")
-    print(user)
-    return str(uuid4())
+    user_email = request.session.get("user").get("email")
+    ownership = OwnershipDB(
+        StorageEngines.gcs,
+        gcs_access=settings.gcs_access,
+        gcs_secret=settings.gcs_secret,
+        bucket=settings.gcs_bucketname,
+    )
+    sid = str(uuid4())
+
+    return ownership.set_ownersip(user_email, sid)
 
 
 @router.get("/greetings", response_class=PlainTextResponse)
