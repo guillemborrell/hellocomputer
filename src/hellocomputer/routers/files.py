@@ -3,10 +3,12 @@ import aiofiles
 # import s3fs
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
+from starlette.requests import Request
 
 from ..config import settings
 from ..db import StorageEngines
 from ..sessions import SessionDB
+from ..users import OwnershipDB
 
 router = APIRouter()
 
@@ -21,7 +23,7 @@ router = APIRouter()
 
 
 @router.post("/upload", tags=["files"])
-async def upload_file(file: UploadFile = File(...), sid: str = ""):
+async def upload_file(request: Request, file: UploadFile = File(...), sid: str = ""):
     async with aiofiles.tempfile.NamedTemporaryFile("wb") as f:
         content = await file.read()
         await f.write(content)
@@ -38,6 +40,13 @@ async def upload_file(file: UploadFile = File(...), sid: str = ""):
             .load_xls(f.name)
             .dump()
         )
+
+        OwnershipDB(
+            StorageEngines.gcs,
+            gcs_access=settings.gcs_access,
+            gcs_secret=settings.gcs_secret,
+            bucket=settings.gcs_bucketname,
+        ).set_ownersip(request.session.get("user").get("email"), sid)
 
         return JSONResponse(
             content={"message": "File uploaded successfully"}, status_code=200

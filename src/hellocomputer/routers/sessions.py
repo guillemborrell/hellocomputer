@@ -16,17 +16,8 @@ router = APIRouter()
 
 
 @router.get("/new_session")
-async def get_new_session(request: Request) -> str:
-    user_email = request.session.get("user").get("email")
-    ownership = OwnershipDB(
-        StorageEngines.gcs,
-        gcs_access=settings.gcs_access,
-        gcs_secret=settings.gcs_secret,
-        bucket=settings.gcs_bucketname,
-    )
-    sid = str(uuid4())
-
-    return ownership.set_ownersip(user_email, sid)
+async def get_new_session() -> str:
+    return str(uuid4())
 
 
 @router.get("/greetings", response_class=PlainTextResponse)

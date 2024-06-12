@@ -13,6 +13,7 @@ $('#menu-toggle').click(function (e) {
     toggleMenuArrow(document.getElementById('menu-toggle'));
 });
 
+// Hide sidebar on mobile devices
 document.addEventListener("DOMContentLoaded", function () {
     console.log('Width: ' + window.innerWidth + ' Height: ' + window.innerHeight);
     if ((window.innerWidth <= 800) && (window.innerHeight <= 600)) {
@@ -25,8 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 const textarea = document.getElementById('chatTextarea');
 const sendButton = document.getElementById('sendButton');
+const sessions = document.getElementById('userSessions');
 const chatMessages = document.querySelector('.chat-messages');
 
+// Auto resize textarea
 textarea.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight <= 150 ? this.scrollHeight : 150) + 'px';
@@ -53,6 +56,7 @@ async function fetchResponse(message, newMessage) {
     }
 }
 
+// Function to add AI message
 function addAIMessage(messageContent) {
     const newMessage = document.createElement('div');
     newMessage.classList.add('message', 'bg-white', 'p-2', 'mb-2', 'rounded');
@@ -123,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchGreeting();
 });
 
+// Function upload the data file
 document.addEventListener("DOMContentLoaded", function () {
     const fileInput = document.getElementById('inputGroupFile01');
     const uploadButton = document.getElementById('uploadButton');
@@ -158,3 +163,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Function to get the user sessions
+document.addEventListener("DOMContentLoaded", function () {
+    const sessionsButton = document.getElementById('loadSessionsButton');
+    sessionsButton.addEventListener('click', async function fetchSessions() {
+        try {
+            const response = await fetch('/sessions');
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            const data = await response.text();
+            sessions.innerHTML = data;
+        } catch (error) {
+            sessions.innerHTML = 'Error: ' + error.message;
+        }
+    }
+    );
+}
+);
