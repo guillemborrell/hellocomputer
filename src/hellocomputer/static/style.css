@@ -57,7 +57,7 @@ html {
 .chat-input {
     position: fixed;
     bottom: 0;
-    width: calc(100% - 250px);
+    width: 100%;
     /* Adjust width considering the sidebar */
     max-width: 600px;
     background: #fff;

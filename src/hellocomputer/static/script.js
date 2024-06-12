@@ -13,6 +13,16 @@ $('#menu-toggle').click(function (e) {
     toggleMenuArrow(document.getElementById('menu-toggle'));
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    console.log('Width: ' + window.innerWidth + ' Height: ' + window.innerHeight);
+    if ((window.innerWidth <= 800) && (window.innerHeight <= 600)) {
+        $('#sidebar').toggleClass('toggled');
+        toggleMenuArrow(document.getElementById('menu-toggle'));
+        console.log('Mobile device detected. Hiding sidebar.');
+    }
+}
+);
+
 const textarea = document.getElementById('chatTextarea');
 const sendButton = document.getElementById('sendButton');
 const chatMessages = document.querySelector('.chat-messages');
