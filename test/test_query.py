@@ -2,11 +2,11 @@ from pathlib import Path
 
 import hellocomputer
 import pytest
-from hellocomputer.sessions import SessionDB
 from hellocomputer.config import settings
 from hellocomputer.db import StorageEngines
 from hellocomputer.extraction import extract_code_block
 from hellocomputer.models import Chat
+from hellocomputer.sessions import SessionDB
 
 TEST_XLS_PATH = (
     Path(hellocomputer.__file__).parents[2]

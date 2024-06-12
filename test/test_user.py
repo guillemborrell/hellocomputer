@@ -2,7 +2,7 @@ from pathlib import Path
 
 import hellocomputer
 from hellocomputer.db import StorageEngines
-from hellocomputer.users import UserDB, OwnershipDB
+from hellocomputer.users import OwnershipDB, UserDB
 
 TEST_STORAGE = StorageEngines.local
 TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"
@@ -28,7 +28,13 @@ def test_user_exists():
 def test_assign_owner():
     assert (
         OwnershipDB(storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER).set_ownersip(
-            "something.something@something", "1234", "test"
+            "something.something@something", "testsession", "test"
         )
-        == "1234"
+        == "testsession"
     )
+
+
+def test_get_sessions():
+    assert OwnershipDB(storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER).sessions(
+        "something.something@something"
+    ) == ["testsession"]

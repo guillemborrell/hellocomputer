@@ -4,9 +4,9 @@ import aiofiles
 from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 
-from ..sessions import SessionDB
 from ..config import settings
 from ..db import StorageEngines
+from ..sessions import SessionDB
 
 router = APIRouter()
 

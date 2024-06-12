@@ -1,8 +1,8 @@
 from pathlib import Path
 
 import hellocomputer
-from hellocomputer.sessions import SessionDB
 from hellocomputer.db import StorageEngines
+from hellocomputer.sessions import SessionDB
 
 TEST_STORAGE = StorageEngines.local
 TEST_XLS_PATH = (

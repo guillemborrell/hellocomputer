@@ -1,11 +1,12 @@
 import json
 import os
+from datetime import datetime
 from pathlib import Path
+from typing import List
 from uuid import UUID, uuid4
 
 import duckdb
 import polars as pl
-from datetime import datetime
 
 from .db import DDB, StorageEngines
 
@@ -79,7 +80,7 @@ class OwnershipDB(DDB):
               '{sid}' as sid,
               '{now}' as timestamp
           )
-        TO '{self.path_prefix}/{record_id}.csv' (FORMAT JSON)"""
+        TO '{self.path_prefix}/{record_id}.csv'"""
 
         try:
             self.db.sql(query)
@@ -88,3 +89,18 @@ class OwnershipDB(DDB):
             self.db.sql(query)
 
         return sid
+
+    def sessions(self, user_email: str) -> List[str]:
+        return (
+            self.db.sql(f"""
+            SELECT
+                sid
+            FROM
+                '{self.path_prefix}/*.csv'
+            WHERE
+                email = '{user_email}'
+        """)
+            .pl()
+            .to_series()
+            .to_list()
+        )
