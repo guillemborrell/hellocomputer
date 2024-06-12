@@ -63,9 +63,8 @@
                                     <label for="datasetLabel" class="form-label">Sesson name</label>
                                     <input type="text" class="form-control" id="datasetLabel"
                                         aria-describedby="labelHelp">
-                                    <div id="labelHelp" class="form-text">You'll be able to recover this file in the
-                                        future
-                                        with this name
+                                    <div id="labelHelp" class="form-text">
+                                        You'll be able to recover this file in the future with this name
                                     </div>
                                 </div>
                                 <div class="modal-body">
@@ -88,7 +87,7 @@
                 <!-- Button trigger modal -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                     id="loadSessionsButton">
-                    Browse sessions
+                    Load a session
                 </button>
 
                 <!-- Modal -->
@@ -97,15 +96,17 @@
                     <div class="modal-dialog modal-dialog-scrollable">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">Current sessions</h5>
+                                <h5 class="modal-title" id="staticBackdropLabel">Available sessions</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body" id="userSessions">
-                                <p>Current sessions...</p>
+                                <ul id="userSessions">
+                                </ul>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    id="sessionCloseButton">Close</button>
                             </div>
                         </div>
                     </div>

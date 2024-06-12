@@ -91,16 +91,23 @@ class OwnershipDB(DDB):
         return sid
 
     def sessions(self, user_email: str) -> List[str]:
-        return (
-            self.db.sql(f"""
+        try:
+            return (
+                self.db.sql(f"""
             SELECT
                 sid
             FROM
                 '{self.path_prefix}/*.csv'
             WHERE
-                email = '{user_email}'
+                email = '{user_email}
+            ORDER BY
+                timestamp ASC
+            LIMIT 10'
         """)
-            .pl()
-            .to_series()
-            .to_list()
-        )
+                .pl()
+                .to_series()
+                .to_list()
+            )
+        # If the table does not exist
+        except duckdb.duckdb.IOException:
+            return []

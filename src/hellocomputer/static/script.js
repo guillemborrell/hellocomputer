@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 const textarea = document.getElementById('chatTextarea');
 const sendButton = document.getElementById('sendButton');
-const sessions = document.getElementById('userSessions');
 const chatMessages = document.querySelector('.chat-messages');
 
 // Auto resize textarea
@@ -167,14 +166,24 @@ document.addEventListener("DOMContentLoaded", function () {
 // Function to get the user sessions
 document.addEventListener("DOMContentLoaded", function () {
     const sessionsButton = document.getElementById('loadSessionsButton');
+    const sessions = document.getElementById('userSessions');
+
     sessionsButton.addEventListener('click', async function fetchSessions() {
         try {
             const response = await fetch('/sessions');
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
-            const data = await response.text();
-            sessions.innerHTML = data;
+            const data = JSON.parse(await response.text());
+            sessions.innerHTML = '';
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                const button = document.createElement('button');
+                button.textContent = item;
+                button.addEventListener("click", function () { alert(`You clicked on ${item}`); });
+                listItem.appendChild(button);
+                sessions.appendChild(listItem);
+            });
         } catch (error) {
             sessions.innerHTML = 'Error: ' + error.message;
         }
