@@ -149,7 +149,7 @@ class SessionDB(DDB):
         )
 
     @property
-    def schema(self):
+    def schema(self) -> str:
         return os.linesep.join(
             [
                 "The schema of the database is the following:",

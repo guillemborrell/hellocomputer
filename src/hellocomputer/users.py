@@ -99,10 +99,10 @@ class OwnershipDB(DDB):
             FROM
                 '{self.path_prefix}/*.csv'
             WHERE
-                email = '{user_email}
+                email = '{user_email}'
             ORDER BY
                 timestamp ASC
-            LIMIT 10'
+            LIMIT 10
         """)
                 .pl()
                 .to_series()

@@ -71,17 +71,27 @@ function addAIManualMessage(m) {
     chatMessages.prepend(newMessage); // Add new message at the top
 }
 
+function addUserMessageBlock(messageContent) {
+    const newMessage = document.createElement('div');
+    newMessage.classList.add('message', 'bg-light', 'p-2', 'mb-2', 'rounded');
+    newMessage.textContent = messageContent;
+    chatMessages.prepend(newMessage); // Add new message at the top
+    textarea.value = ''; // Clear the textarea
+    textarea.style.height = 'auto'; // Reset the textarea height
+    textarea.style.overflowY = 'hidden';
+};
+
 function addUserMessage() {
     const messageContent = textarea.value.trim();
-    if (messageContent) {
-        const newMessage = document.createElement('div');
-        newMessage.classList.add('message', 'bg-light', 'p-2', 'mb-2', 'rounded');
-        newMessage.textContent = messageContent;
-        chatMessages.prepend(newMessage); // Add new message at the top
-        textarea.value = ''; // Clear the textarea
-        textarea.style.height = 'auto'; // Reset the textarea height
-        textarea.style.overflowY = 'hidden';
-        addAIMessage(messageContent);
+    if (sessionStorage.getItem("helloComputerSessionLoaded") == 'false') {
+        textarea.value = '';
+        addAIManualMessage('Please upload a data file or select a session first!');
+    }
+    else {
+        if (messageContent) {
+            addUserMessageBlock(messageContent);
+            addAIMessage(messageContent);
+        }
     }
 };
 
@@ -104,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const session_response = await fetch('/new_session');
             sessionStorage.setItem("helloComputerSession", JSON.parse(await session_response.text()));
+            sessionStorage.setItem("helloComputerSessionLoaded", false);
 
             const response = await fetch('/greetings?sid=' + sessionStorage.getItem('helloComputerSession'));
 
@@ -155,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const data = await response.text();
             uploadResultDiv.textContent = 'Upload successful: ' + JSON.parse(data)['message'];
+            sessionStorage.setItem("helloComputerSessionLoaded", true);
 
             addAIManualMessage('File uploaded and processed!');
         } catch (error) {

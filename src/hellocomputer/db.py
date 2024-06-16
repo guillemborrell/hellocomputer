@@ -1,7 +1,6 @@
 from enum import StrEnum
+from sqlalchemy import create_engine, text
 from pathlib import Path
-
-import duckdb
 
 
 class StorageEngines(StrEnum):
@@ -19,11 +18,13 @@ class DDB:
         bucket: str | None = None,
         **kwargs,
     ):
-        self.db = duckdb.connect()
-        self.db.install_extension("spatial")
-        self.db.install_extension("httpfs")
-        self.db.load_extension("spatial")
-        self.db.load_extension("httpfs")
+        self.engine = create_engine(
+            "duckdb:///:memory:",
+            connect_args={
+                "preload_extensions": ["https", "spatial"],
+                "config": {"memory_limit": "300mb"},
+            },
+        )
         self.sheets = tuple()
         self.loaded = False
 
@@ -35,12 +36,18 @@ class DDB:
                     bucket is not None,
                 )
             ):
-                self.db.sql(f"""
+                with self.engine.connect() as conn:
+                    conn.execute(
+                        text(
+                            f"""
                     CREATE SECRET (
                     TYPE GCS,
                     KEY_ID '{gcs_access}',
                     SECRET '{gcs_secret}')
-                    """)
+                    """
+                        )
+                    )
+
                 self.path_prefix = f"gcs://{bucket}"
             else:
                 raise ValueError(
@@ -55,3 +62,7 @@ class DDB:
                 raise ValueError(
                     "With local storage you need to provide the path keyword argument"
                 )
+
+    @property
+    def db(self):
+        return self.engine.raw_connection()

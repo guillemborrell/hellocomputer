@@ -6,9 +6,11 @@ pydantic-settings
 s3fs
 aiofiles
 duckdb
+duckdb-engine
 polars
 pyarrow
 pyjwt[crypto]
 python-multipart
 authlib
 itsdangerous
+sqlalchemy
