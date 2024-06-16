@@ -1,12 +1,12 @@
+from typing import List
 from uuid import uuid4
 
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 from starlette.requests import Request
-from typing import List
 
 from hellocomputer.db import StorageEngines
-from hellocomputer.users import OwnershipDB
+from hellocomputer.db.users import OwnershipDB
 
 from ..config import settings
 

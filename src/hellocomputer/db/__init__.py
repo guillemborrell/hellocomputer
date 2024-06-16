@@ -1,6 +1,7 @@
 from enum import StrEnum
-from sqlalchemy import create_engine, text
 from pathlib import Path
+
+from sqlalchemy import create_engine, text
 
 
 class StorageEngines(StrEnum):

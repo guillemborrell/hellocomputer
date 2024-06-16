@@ -7,8 +7,8 @@ from starlette.requests import Request
 
 from ..config import settings
 from ..db import StorageEngines
-from ..sessions import SessionDB
-from ..users import OwnershipDB
+from ..db.sessions import SessionDB
+from ..db.users import OwnershipDB
 
 router = APIRouter()
 

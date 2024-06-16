@@ -6,7 +6,7 @@ from hellocomputer.config import settings
 from hellocomputer.db import StorageEngines
 from hellocomputer.extraction import extract_code_block
 from hellocomputer.models import Chat
-from hellocomputer.sessions import SessionDB
+from hellocomputer.db.sessions import SessionDB
 
 TEST_STORAGE = StorageEngines.local
 TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"

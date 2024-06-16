@@ -8,7 +8,7 @@ from uuid import UUID, uuid4
 import duckdb
 import polars as pl
 
-from .db import DDB, StorageEngines
+from . import DDB, StorageEngines
 
 
 class UserDB(DDB):

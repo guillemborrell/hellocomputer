@@ -5,7 +5,7 @@ from starlette.requests import Request
 
 from hellocomputer.config import settings
 from hellocomputer.db import StorageEngines
-from hellocomputer.users import UserDB
+from hellocomputer.db.users import UserDB
 
 router = APIRouter()
 

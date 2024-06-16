@@ -6,7 +6,7 @@ from typing_extensions import Self
 
 from hellocomputer.db import StorageEngines
 
-from .db import DDB
+from . import DDB
 
 
 class SessionDB(DDB):

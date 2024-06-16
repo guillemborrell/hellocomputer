@@ -2,7 +2,7 @@ from pathlib import Path
 
 import hellocomputer
 from hellocomputer.db import StorageEngines
-from hellocomputer.users import OwnershipDB, UserDB
+from hellocomputer.db.users import OwnershipDB, UserDB
 
 TEST_STORAGE = StorageEngines.local
 TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"
