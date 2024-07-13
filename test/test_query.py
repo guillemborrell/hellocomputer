@@ -20,45 +20,45 @@ SID = "test"
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    settings.anyscale_api_key == "Awesome API", reason="API Key not set"
-)
+@pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
 async def test_chat_simple():
-    chat = Chat(api_key=settings.anyscale_api_key, temperature=0)
-    chat = await chat.eval("Your're a helpful assistant", "Say literlly 'Hello'")
-    assert chat.last_response_content() == "Hello!"
+    chat = Chat(api_key=settings.llm_api_key, temperature=0)
+    chat = await chat.eval("Say literlly 'Hello'")
+    assert "Hello" in chat.last_response_content()
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    settings.anyscale_api_key == "Awesome API", reason="API Key not set"
-)
+@pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
 async def test_simple_data_query():
     query = "write a query that finds the average score of all students in the current database"
 
-    chat = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
+    chat = Chat(
+        api_key=settings.llm_api_key,
+        temperature=0.5,
+    )
     db = SessionDB(
         storage_engine=StorageEngines.local, path=TEST_XLS_PATH.parent, sid=SID
     ).load_xls(TEST_XLS_PATH)
 
-    chat = await chat.eval("You're an expert sql developer", db.query_prompt(query))
+    chat = await chat.sql_eval(db.query_prompt(query))
     query = extract_code_block(chat.last_response_content())
     assert query.startswith("SELECT")
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(
-    settings.anyscale_api_key == "Awesome API", reason="API Key not set"
-)
+@pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
 async def test_data_query():
     q = "find the average score of all the sudents"
 
-    llm = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
+    llm = Chat(
+        api_key=settings.llm_api_key,
+        temperature=0.5,
+    )
     db = SessionDB(
         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
     ).load_folder()
 
-    chat = await llm.eval("You're a DUCKDB expert", db.query_prompt(q))
+    chat = await llm.sql_eval(db.query_prompt(q))
     query = extract_code_block(chat.last_response_content())
     result = db.query(query).pl()
 

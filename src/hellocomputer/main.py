@@ -22,7 +22,6 @@ app.add_middleware(SessionMiddleware, secret_key=settings.app_secret_key)
 async def homepage(request: Request):
     user = request.session.get("user")
     if user:
-        print(json.dumps(user))
         return RedirectResponse("/app")
 
     with open(static_path / "login.html") as f:

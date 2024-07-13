@@ -19,7 +19,8 @@ You'll need the following environment variables in a .env file:
 
 * `GCS_ACCESS`
 * `GCS_SECRET`
-* `ANYSCALE_API_KEY`
+* `LLM_API_KEY`
+* `LLM_BASE_URL`
 * `GCS_BUCKETNAME`
 
 And to get the application up and running...

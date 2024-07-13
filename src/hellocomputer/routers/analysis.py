@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("/query", response_class=PlainTextResponse, tags=["queries"])
 async def query(sid: str = "", q: str = "") -> str:
-    llm = Chat(api_key=settings.anyscale_api_key, temperature=0.5)
+    llm = Chat(api_key=settings.llm_api_key, temperature=0.5)
     db = SessionDB(
         StorageEngines.gcs,
         gcs_access=settings.gcs_access,

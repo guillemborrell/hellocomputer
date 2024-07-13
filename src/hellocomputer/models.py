@@ -1,14 +1,34 @@
 from enum import StrEnum
 
-from langchain_community.chat_models import ChatAnyscale
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_fireworks import Fireworks
+from langchain_core.prompts import PromptTemplate
 
 
 class AvailableModels(StrEnum):
-    llama3_8b = "meta-llama/Meta-Llama-3-8B-Instruct"
-    llama3_70b = "meta-llama/Meta-Llama-3-70B-Instruct"
+    llama3_70b = "accounts/fireworks/models/llama-v3-70b-instruct"
     # Function calling model
-    mixtral_8x7b = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    mixtral_8x7b = "accounts/fireworks/models/mixtral-8x7b-instruct"
+    mixtral_8x22b = "accounts/fireworks/models/mixtral-8x22b-instruct"
+    firefunction_2 = "accounts/fireworks/models/firefunction-v2"
+
+
+general_prompt = """
+You're a helpful assistant. Perform the following tasks:
+
+----
+{query}
+----
+"""
+
+sql_prompt = """
+You're a SQL expert. Write a query using the duckdb dialect. The goal of the query is the following:
+
+----
+{query}
+----
+
+Return only the sql statement without any additional text.
+"""
 
 
 class Chat:
@@ -25,33 +45,36 @@ class Chat:
 
     def __init__(
         self,
-        model: AvailableModels = AvailableModels.llama3_8b,
+        model: AvailableModels = AvailableModels.mixtral_8x7b,
         api_key: str = "",
         temperature: float = 0.5,
     ):
-        self.model_name = model
+        self.model = model
         self.api_key = self.raise_no_key(api_key)
         self.messages = []
         self.responses = []
 
-        self.model: ChatAnyscale = ChatAnyscale(
-            model_name=model, temperature=temperature, anyscale_api_key=self.api_key
+        self.model: Fireworks = Fireworks(
+            model=model, temperature=temperature, api_key=self.api_key
         )
 
-    async def eval(self, system: str, human: str):
-        self.messages.append(
-            [
-                SystemMessage(content=system),
-                HumanMessage(content=human),
-            ]
-        )
+    async def eval(self, task):
+        prompt = PromptTemplate.from_template(general_prompt)
 
-        response = await self.model.ainvoke(self.messages[-1])
+        response = await self.model.ainvoke(prompt.format(query=task))
+        self.responses.append(response)
+        return self
+
+    async def sql_eval(self, question):
+        prompt = PromptTemplate.from_template(sql_prompt)
+
+        response = await self.model.ainvoke(prompt.format(query=question))
         self.responses.append(response)
         return self
 
     def last_response_content(self):
-        return self.responses[-1].content
+        last_response = self.responses[-1]
+        return last_response
 
     def last_response_metadata(self):
         return self.responses[-1].response_metadata
