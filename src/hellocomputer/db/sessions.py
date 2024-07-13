@@ -24,7 +24,7 @@ class SessionDB(DDB):
         self.sid = sid
         # Override storage engine for sessions
         if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gcs://{bucket}/sessions/{sid}"
+            self.path_prefix = f"gs://{bucket}/sessions/{sid}"
         elif storage_engine == StorageEngines.local:
             self.path_prefix = path / "sessions" / sid
 

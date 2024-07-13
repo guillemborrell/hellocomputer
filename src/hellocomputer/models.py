@@ -1,7 +1,7 @@
 from enum import StrEnum
 
-from langchain_fireworks import Fireworks
 from langchain_core.prompts import PromptTemplate
+from langchain_fireworks import Fireworks
 
 
 class AvailableModels(StrEnum):

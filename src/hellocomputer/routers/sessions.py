@@ -9,6 +9,7 @@ from hellocomputer.db import StorageEngines
 from hellocomputer.db.users import OwnershipDB
 
 from ..config import settings
+from ..auth import get_user_email
 
 # Scheme for the Authorization header
 
@@ -30,7 +31,7 @@ async def get_greeting() -> str:
 
 @router.get("/sessions")
 async def get_sessions(request: Request) -> List[str]:
-    user_email = request.session.get("user").get("email")
+    user_email = get_user_email(request)
     ownership = OwnershipDB(
         StorageEngines.gcs,
         gcs_access=settings.gcs_access,

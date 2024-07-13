@@ -24,10 +24,12 @@ class UserDB(DDB):
         super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
 
         if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gcs://{bucket}/users"
+            self.path_prefix = f"gs://{bucket}/users"
 
         elif storage_engine == StorageEngines.local:
             self.path_prefix = path / "users"
+
+        self.storage_engine = storage_engine
 
     def dump_user_record(self, user_data: dict, record_id: UUID | None = None):
         df = pl.from_dict(user_data)  # noqa
@@ -36,9 +38,12 @@ class UserDB(DDB):
 
         try:
             self.db.sql(query)
-        except duckdb.duckdb.IOException:
-            os.makedirs(self.path_prefix)
-            self.db.sql(query)
+        except duckdb.duckdb.IOException as e:
+            if self.storage_engine == StorageEngines.local:
+                os.makedirs(self.path_prefix)
+                self.db.sql(query)
+            else:
+                raise e
 
         return user_data
 
@@ -64,7 +69,7 @@ class OwnershipDB(DDB):
         super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
 
         if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gcs://{bucket}/owners"
+            self.path_prefix = f"gs://{bucket}/owners"
 
         elif storage_engine == StorageEngines.local:
             self.path_prefix = path / "owners"

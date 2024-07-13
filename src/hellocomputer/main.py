@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -9,6 +8,7 @@ from starlette.requests import Request
 
 import hellocomputer
 
+from .auth import get_user
 from .config import settings
 from .routers import analysis, auth, files, health, sessions
 
@@ -20,7 +20,7 @@ app.add_middleware(SessionMiddleware, secret_key=settings.app_secret_key)
 
 @app.get("/")
 async def homepage(request: Request):
-    user = request.session.get("user")
+    user = get_user(request)
     if user:
         return RedirectResponse("/app")
 

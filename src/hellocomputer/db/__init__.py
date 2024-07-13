@@ -48,8 +48,9 @@ class DDB:
                     """
                         )
                     )
+                    conn.execute(text("LOAD httpfs"))
 
-                self.path_prefix = f"gcs://{bucket}"
+                self.path_prefix = f"gs://{bucket}"
             else:
                 raise ValueError(
                     "With GCS storage engine you need to provide "
