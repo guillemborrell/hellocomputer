@@ -15,7 +15,7 @@ RUN uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.tx
 RUN uv pip install --python /usr/local/bin/python3 -e .
 
 # Install the httpfs extension for duckdb
-RUN python3 -c "import duckdb; db = duckdb.connect(':memory:'); db.sql('install httpfs')"
+RUN python3 -c "import duckdb; db = duckdb.connect(':memory:'); db.sql('install httpfs'); db.sql('install spatial')"
 
 EXPOSE 8080
 
