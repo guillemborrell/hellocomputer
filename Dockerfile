@@ -14,6 +14,9 @@ RUN pip install uv
 RUN uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
 RUN uv pip install --python /usr/local/bin/python3 -e .
 
+# Install the httpfs extension for duckdb
+RUN python3 -c "import duckdb; db = duckdb.connect(':memory:'); db.sql('install httpfs')"
+
 EXPOSE 8080
 
 # Run the command to start uvicorn
