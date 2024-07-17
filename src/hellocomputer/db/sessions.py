@@ -71,10 +71,13 @@ class SessionDB(DDB):
 
         try:
             self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
-        except duckdb.duckdb.IOException:
+        except duckdb.duckdb.IOException as e:
             # Create the folder
-            os.makedirs(self.path_prefix)
-            self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
+            if self.storage_engine == StorageEngines.local:
+                os.makedirs(self.path_prefix)
+                self.db.query(f"copy metadata to '{self.path_prefix}/metadata.csv'")
+            else:
+                raise e
 
         for sheet in self.sheets:
             self.db.query(f"copy {sheet} to '{self.path_prefix}/{sheet}.csv'")
@@ -156,9 +159,6 @@ class SessionDB(DDB):
             ]
             + [self.table_schema(sheet) for sheet in self.sheets]
         )
-
-    def query(self, sql, *args, **kwargs):
-        return self.db.query(sql, *args, **kwargs)
 
     def query_prompt(self, user_prompt: str) -> str:
         query = (

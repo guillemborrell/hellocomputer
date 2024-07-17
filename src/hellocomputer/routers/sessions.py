@@ -8,8 +8,8 @@ from starlette.requests import Request
 from hellocomputer.db import StorageEngines
 from hellocomputer.db.users import OwnershipDB
 
-from ..config import settings
 from ..auth import get_user_email
+from ..config import settings
 
 # Scheme for the Authorization header
 

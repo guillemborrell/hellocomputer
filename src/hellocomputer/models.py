@@ -1,7 +1,13 @@
 from enum import StrEnum
+from pathlib import Path
 
+from anyio import open_file
 from langchain_core.prompts import PromptTemplate
 from langchain_fireworks import Fireworks
+
+import hellocomputer
+
+PROMPT_DIR = Path(hellocomputer.__file__).parent / "prompts"
 
 
 class AvailableModels(StrEnum):
@@ -12,23 +18,19 @@ class AvailableModels(StrEnum):
     firefunction_2 = "accounts/fireworks/models/firefunction-v2"
 
 
-general_prompt = """
-You're a helpful assistant. Perform the following tasks:
+class Prompts:
+    @classmethod
+    async def getter(cls, name):
+        async with await open_file(PROMPT_DIR / f"{name}.md") as f:
+            return await f.read()
 
-----
-{query}
-----
-"""
+    @classmethod
+    async def general(cls):
+        return await cls.getter("general_prompt")
 
-sql_prompt = """
-You're a SQL expert. Write a query using the duckdb dialect. The goal of the query is the following:
-
-----
-{query}
-----
-
-Return only the sql statement without any additional text.
-"""
+    @classmethod
+    async def sql(cls):
+        return await cls.getter("sql_prompt")
 
 
 class Chat:
@@ -59,14 +61,14 @@ class Chat:
         )
 
     async def eval(self, task):
-        prompt = PromptTemplate.from_template(general_prompt)
+        prompt = PromptTemplate.from_template(await Prompts.general())
 
         response = await self.model.ainvoke(prompt.format(query=task))
         self.responses.append(response)
         return self
 
     async def sql_eval(self, question):
-        prompt = PromptTemplate.from_template(sql_prompt)
+        prompt = PromptTemplate.from_template(await Prompts.sql())
 
         response = await self.model.ainvoke(prompt.format(query=question))
         self.responses.append(response)
