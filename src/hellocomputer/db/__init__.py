@@ -58,9 +58,6 @@ class DDB:
                     "With local storage you need to provide the path keyword argument"
                 )
             
-        # Load extensions
-        self.db.sql("load spatial;")
-        self.db.sql("load httpfs;")
 
     def query(self, sql, *args, **kwargs):
         return self.db.query(sql, *args, **kwargs)

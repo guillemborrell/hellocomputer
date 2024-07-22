@@ -30,6 +30,7 @@ class SessionDB(DDB):
 
     def load_xls(self, xls_path: Path) -> Self:
         """For some reason, the header is not loaded"""
+        self.db.sql("load spatial")
         self.db.sql(f"""
             create table metadata as (
             select
