@@ -6,5 +6,7 @@ pipeline:
       - uv pip install --python /usr/local/bin/python3 --no-cache -r requirements.txt
       - uv pip install --python /usr/local/bin/python3 -e .
       - uv pip install --python /usr/local/bin/python3 pytest
+      - python3 -c "import duckdb; db = duckdb.connect(':memory:'); db.sql('install httpfs'); db.sql('install spatial')"
       - pytest ./test/test_user.py
       - pytest ./test/test_data.py
+      - pytest ./test/test_query.py
