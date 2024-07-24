@@ -3,30 +3,22 @@ from pathlib import Path
 
 import duckdb
 from typing_extensions import Self
+from langchain_community.utilities.sql_database import SQLDatabase
 
-from hellocomputer.db import StorageEngines
+from hellocomputer.config import Settings, StorageEngines
 
 from . import DDB
 
 
 class SessionDB(DDB):
-    def __init__(
-        self,
-        storage_engine: StorageEngines,
-        sid: str | None = None,
-        path: Path | None = None,
-        gcs_access: str | None = None,
-        gcs_secret: str | None = None,
-        bucket: str | None = None,
-        **kwargs,
-    ):
-        super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
+    def __init__(self, settings: Settings, sid: str):
+        super().__init__(settings=settings)
         self.sid = sid
         # Override storage engine for sessions
-        if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gs://{bucket}/sessions/{sid}"
-        elif storage_engine == StorageEngines.local:
-            self.path_prefix = path / "sessions" / sid
+        if settings.storage_engine == StorageEngines.gcs:
+            self.path_prefix = f"gs://{settings.gcs_bucketname}/sessions/{sid}"
+        elif settings.storage_engine == StorageEngines.local:
+            self.path_prefix = settings.path / "sessions" / sid
 
     def load_xls(self, xls_path: Path) -> Self:
         """For some reason, the header is not loaded"""
@@ -175,3 +167,7 @@ class SessionDB(DDB):
                 "Return just the SQL statement",
             ]
         )
+
+    @property
+    def llmsql(self):
+        return SQLDatabase(self.engine, ignore_tables=["metadata"])

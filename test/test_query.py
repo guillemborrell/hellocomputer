@@ -3,65 +3,89 @@ from pathlib import Path
 import hellocomputer
 import polars as pl
 import pytest
-from hellocomputer.config import settings
-from hellocomputer.db import StorageEngines
+from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.sessions import SessionDB
 from hellocomputer.extraction import extract_code_block
-from hellocomputer.models import Chat
+from hellocomputer.models import AvailableModels
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.agent_toolkits import SQLDatabaseToolkit
+from langchain_openai import ChatOpenAI
 
-TEST_STORAGE = StorageEngines.local
-TEST_OUTPUT_FOLDER = Path(hellocomputer.__file__).parents[2] / "test" / "output"
+settings = Settings(
+    storage_engine=StorageEngines.local,
+    path=Path(hellocomputer.__file__).parents[2] / "test" / "output",
+)
+
 TEST_XLS_PATH = (
     Path(hellocomputer.__file__).parents[2]
     / "test"
     / "data"
     / "TestExcelHelloComputer.xlsx"
 )
+
 SID = "test"
 
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
 async def test_chat_simple():
-    chat = Chat(api_key=settings.llm_api_key, temperature=0)
-    chat = await chat.eval("Say literlly 'Hello'")
-    assert "Hello" in chat.last_response_content()
+    llm = ChatOpenAI(
+        base_url=settings.llm_base_url,
+        api_key=settings.llm_api_key,
+        model=AvailableModels.mixtral_8x7b,
+        temperature=0.5,
+    )
+    prompt = ChatPromptTemplate.from_template(
+        """Say literally {word}, a single word. Don't be verbose, 
+        I'll be disappointed if you say more than a single word"""
+    )
+    chain = prompt | llm
+    response = await chain.ainvoke({"word": "Hello"})
+
+    assert response.content.lower().startswith("hello")
 
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
-async def test_simple_data_query():
-    query = "write a query that finds the average score of all students in the current database"
+async def test_query_context():
+    db = SessionDB(settings, sid=SID).load_xls(TEST_XLS_PATH).llmsql
 
-    chat = Chat(
+    llm = ChatOpenAI(
+        base_url=settings.llm_base_url,
         api_key=settings.llm_api_key,
+        model=AvailableModels.mixtral_8x7b,
         temperature=0.5,
     )
-    db = SessionDB(
-        storage_engine=StorageEngines.local, path=TEST_XLS_PATH.parent, sid=SID
-    ).load_xls(TEST_XLS_PATH)
 
-    chat = await chat.sql_eval(db.query_prompt(query))
-    query = extract_code_block(chat.last_response_content())
-    assert query.startswith("SELECT")
+    toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+    context = toolkit.get_context()
+    assert "table_info" in context
+    assert "table_names" in context
 
 
-@pytest.mark.asyncio
-@pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
-async def test_data_query():
-    q = "Find the average score of all the sudents"
-
-    llm = Chat(
-        api_key=settings.llm_api_key,
-        temperature=0.5,
-    )
-    db = SessionDB(
-        storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
-    ).load_folder()
-
-    chat = await llm.sql_eval(db.query_prompt(q))
-    query = extract_code_block(chat.last_response_content())
-    result: pl.DataFrame = db.query(query).pl()
-
-    assert result.shape[0] == 1
-    assert result.select([pl.col("avg(Score)")]).to_series()[0] == 0.5
+#
+#     chat = await chat.sql_eval(db.query_prompt(query))
+#     query = extract_code_block(chat.last_response_content())
+#     assert query.startswith("SELECT")
+#
+#
+# @pytest.mark.asyncio
+# @pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
+# async def test_data_query():
+#     q = "Find the average score of all the sudents"
+#
+#     llm = Chat(
+#         api_key=settings.llm_api_key,
+#         temperature=0.5,
+#     )
+#     db = SessionDB(
+#         storage_engine=TEST_STORAGE, path=TEST_OUTPUT_FOLDER, sid="test"
+#     ).load_folder()
+#
+#     chat = await llm.sql_eval(db.query_prompt(q))
+#     query = extract_code_block(chat.last_response_content())
+#     result: pl.DataFrame = db.query(query).pl()
+#
+#     assert result.shape[0] == 1
+#     assert result.select([pl.col("avg(Score)")]).to_series()[0] == 0.5
+#

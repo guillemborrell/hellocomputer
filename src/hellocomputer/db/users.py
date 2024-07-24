@@ -1,35 +1,30 @@
 import json
 import os
 from datetime import datetime
-from pathlib import Path
 from typing import List
 from uuid import UUID, uuid4
 
 import duckdb
 import polars as pl
 
-from . import DDB, StorageEngines
+from hellocomputer.db import DDB
+from hellocomputer.config import Settings, StorageEngines
 
 
 class UserDB(DDB):
     def __init__(
         self,
-        storage_engine: StorageEngines,
-        path: Path | None = None,
-        gcs_access: str | None = None,
-        gcs_secret: str | None = None,
-        bucket: str | None = None,
-        **kwargs,
+        settings: Settings,
     ):
-        super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
+        super().__init__(settings)
 
-        if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gs://{bucket}/users"
+        if settings.storage_engine == StorageEngines.gcs:
+            self.path_prefix = f"gs://{settings.gcs_bucketname}/users"
 
-        elif storage_engine == StorageEngines.local:
-            self.path_prefix = path / "users"
+        elif settings.storage_engine == StorageEngines.local:
+            self.path_prefix = settings.path / "users"
 
-        self.storage_engine = storage_engine
+        self.storage_engine = settings.storage_engine
 
     def dump_user_record(self, user_data: dict, record_id: UUID | None = None):
         df = pl.from_dict(user_data)  # noqa
@@ -59,20 +54,15 @@ class UserDB(DDB):
 class OwnershipDB(DDB):
     def __init__(
         self,
-        storage_engine: StorageEngines,
-        path: Path | None = None,
-        gcs_access: str | None = None,
-        gcs_secret: str | None = None,
-        bucket: str | None = None,
-        **kwargs,
+        settings: Settings,
     ):
-        super().__init__(storage_engine, path, gcs_access, gcs_secret, bucket, **kwargs)
+        super().__init__(settings)
 
-        if storage_engine == StorageEngines.gcs:
-            self.path_prefix = f"gs://{bucket}/owners"
+        if settings.storage_engine == StorageEngines.gcs:
+            self.path_prefix = f"gs://{settings.gcs_bucketname}/owners"
 
-        elif storage_engine == StorageEngines.local:
-            self.path_prefix = path / "owners"
+        elif settings.storage_engine == StorageEngines.local:
+            self.path_prefix = settings.path / "owners"
 
     def set_ownersip(self, user_email: str, sid: str, record_id: UUID | None = None):
         now = datetime.now().isoformat()

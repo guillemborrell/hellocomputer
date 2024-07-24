@@ -1,4 +1,5 @@
 langchain
+langgraph
 langchain-community
 langchain-fireworks
 langchain-openai
@@ -11,6 +12,7 @@ duckdb
 duckdb-engine
 polars
 pyarrow
+pydantic
 pyjwt[crypto]
 python-multipart
 authlib

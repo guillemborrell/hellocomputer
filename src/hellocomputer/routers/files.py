@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
 from ..config import settings
-from ..db import StorageEngines
+from ..config import StorageEngines
 from ..db.sessions import SessionDB
 from ..db.users import OwnershipDB
 
