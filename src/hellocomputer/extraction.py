@@ -1,3 +1,5 @@
+from langchain.output_parsers.enum import EnumOutputParser
+from enum import StrEnum
 import re
 
 
@@ -8,3 +10,12 @@ def extract_code_block(response):
     if len(matches) > 1:
         raise ValueError("More than one code block")
     return matches[0].removeprefix("sql").removeprefix("\n")
+
+
+class InitialIntent(StrEnum):
+    general = "general"
+    query = "query"
+    visualization = "visualization"
+
+
+initial_intent_parser = EnumOutputParser(enum=InitialIntent)

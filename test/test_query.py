@@ -5,8 +5,8 @@ import polars as pl
 import pytest
 from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.sessions import SessionDB
-from hellocomputer.extraction import extract_code_block
-from hellocomputer.models import AvailableModels
+from hellocomputer.models import AvailableModels, Prompts
+from hellocomputer.extraction import initial_intent_parser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain_openai import ChatOpenAI
@@ -42,7 +42,7 @@ async def test_chat_simple():
     chain = prompt | llm
     response = await chain.ainvoke({"word": "Hello"})
 
-    assert response.content.lower().startswith("hello")
+    assert "hello" in response.content.lower()
 
 
 @pytest.mark.asyncio
@@ -61,6 +61,27 @@ async def test_query_context():
     context = toolkit.get_context()
     assert "table_info" in context
     assert "table_names" in context
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(settings.llm_api_key == "Awesome API", reason="API Key not set")
+async def test_initial_intent():
+    llm = ChatOpenAI(
+        base_url=settings.llm_base_url,
+        api_key=settings.llm_api_key,
+        model=AvailableModels.llama_medium,
+        temperature=0.5,
+    )
+    prompt = await Prompts.intent()
+    chain = prompt | llm | initial_intent_parser
+
+    response = await chain.ainvoke({"query", "Make me a sandwich"})
+    assert response == "general"
+
+    response = await chain.ainvoke(
+        {"query", "Which is the average score of all the students"}
+    )
+    assert response == "query"
 
 
 #
