@@ -5,7 +5,8 @@ import polars as pl
 import pytest
 from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.sessions import SessionDB
-from hellocomputer.models import AvailableModels, Prompts
+from hellocomputer.models import AvailableModels
+from hellocomputer.prompts import Prompts
 from hellocomputer.extraction import initial_intent_parser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
@@ -69,8 +70,8 @@ async def test_initial_intent():
     llm = ChatOpenAI(
         base_url=settings.llm_base_url,
         api_key=settings.llm_api_key,
-        model=AvailableModels.llama_medium,
-        temperature=0.5,
+        model=AvailableModels.llama_small,
+        temperature=0,
     )
     prompt = await Prompts.intent()
     chain = prompt | llm | initial_intent_parser

@@ -1,5 +1,5 @@
 import pytest
-from hellocomputer.models import Prompts
+from hellocomputer.prompts import Prompts
 from langchain.prompts import PromptTemplate
 
 
