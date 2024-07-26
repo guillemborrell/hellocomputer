@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import hellocomputer
-import polars as pl
 import pytest
 from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.sessions import SessionDB

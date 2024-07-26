@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import hellocomputer
-from hellocomputer.config import StorageEngines, Settings
+from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.users import OwnershipDB, UserDB
 
 settings = Settings(

@@ -1,6 +1,7 @@
+from pathlib import Path
+
 from anyio import open_file
 from langchain_core.prompts import PromptTemplate
-from pathlib import Path
 
 import hellocomputer
 
@@ -19,8 +20,12 @@ class Prompts:
 
     @classmethod
     async def general(cls):
-        return PromptTemplate.from_template(await cls.getter("general_prompt"))
+        return PromptTemplate.from_template(await cls.getter("general"))
 
     @classmethod
     async def sql(cls):
-        return PromptTemplate.from_template(await cls.getter("sql_prompt"))
+        return PromptTemplate.from_template(await cls.getter("sql"))
+
+    @classmethod
+    async def visualization(cls):
+        return PromptTemplate.from_template(await cls.getter("visualization"))

@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field
 from typing import Type
+
 from langchain.tools import BaseTool
-from hellocomputer.db.sessions import SessionDB
+from pydantic import BaseModel, Field
+
 from hellocomputer.config import settings
+from hellocomputer.db.sessions import SessionDB
 
 
 class DuckdbQueryInput(BaseModel):

@@ -5,8 +5,7 @@ from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from ..config import settings
-from ..config import StorageEngines
+from ..config import StorageEngines, settings
 from ..db.sessions import SessionDB
 from ..db.users import OwnershipDB
 

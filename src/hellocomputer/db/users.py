@@ -7,8 +7,8 @@ from uuid import UUID, uuid4
 import duckdb
 import polars as pl
 
-from hellocomputer.db import DDB
 from hellocomputer.config import Settings, StorageEngines
+from hellocomputer.db import DDB
 
 
 class UserDB(DDB):

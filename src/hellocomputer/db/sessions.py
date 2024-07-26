@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 
 import duckdb
-from typing_extensions import Self
 from langchain_community.utilities.sql_database import SQLDatabase
+from typing_extensions import Self
 
 from hellocomputer.config import Settings, StorageEngines
 

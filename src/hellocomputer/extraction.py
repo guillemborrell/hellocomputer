@@ -1,6 +1,7 @@
-from langchain.output_parsers.enum import EnumOutputParser
-from enum import StrEnum
 import re
+from enum import StrEnum
+
+from langchain.output_parsers.enum import EnumOutputParser
 
 
 def extract_code_block(response):
