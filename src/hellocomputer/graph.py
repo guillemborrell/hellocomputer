@@ -21,7 +21,7 @@ async def intent(state: MessagesState):
     prompt = await Prompts.intent()
     chain = prompt | llm | initial_intent_parser
 
-    return {"messages": [await chain.ainvoke({"query", query})]}
+    return {"messages": [await chain.ainvoke({"query", query.content})]}
 
 
 def route_intent(state: MessagesState) -> Literal["general", "query", "visualization"]:

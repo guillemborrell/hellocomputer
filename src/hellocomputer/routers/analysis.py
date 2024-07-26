@@ -12,4 +12,4 @@ router = APIRouter()
 async def query(request: Request, sid: str = "", q: str = "") -> str:
     user = request.session.get("user")  # noqa
     response = await app.ainvoke({"messages": [HumanMessage(content=q)]})
-    return response
+    return response["messages"][-1].content

@@ -4,11 +4,11 @@ import hellocomputer
 import pytest
 from hellocomputer.config import Settings, StorageEngines
 from hellocomputer.db.sessions import SessionDB
+from hellocomputer.extraction import initial_intent_parser
 from hellocomputer.models import AvailableModels
 from hellocomputer.prompts import Prompts
-from hellocomputer.extraction import initial_intent_parser
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 settings = Settings(
