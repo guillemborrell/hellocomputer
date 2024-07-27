@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 from uuid import UUID, uuid4
 
 import duckdb
@@ -64,7 +64,13 @@ class OwnershipDB(DDB):
         elif settings.storage_engine == StorageEngines.local:
             self.path_prefix = settings.path / "owners"
 
-    def set_ownersip(self, user_email: str, sid: str, record_id: UUID | None = None):
+    def set_ownership(
+        self,
+        user_email: str,
+        sid: str,
+        session_name: str,
+        record_id: UUID | None = None,
+    ):
         now = datetime.now().isoformat()
         record_id = uuid4() if record_id is None else record_id
         query = f"""
@@ -73,6 +79,7 @@ class OwnershipDB(DDB):
             SELECT
               '{user_email}' as email,
               '{sid}' as sid,
+              '{session_name}' as session_name,
               '{now}' as timestamp
           )
         TO '{self.path_prefix}/{record_id}.csv'"""
@@ -85,12 +92,12 @@ class OwnershipDB(DDB):
 
         return sid
 
-    def sessions(self, user_email: str) -> List[str]:
+    def sessions(self, user_email: str) -> List[Dict[str, str]]:
         try:
             return (
                 self.db.sql(f"""
             SELECT
-                sid
+                sid, session_name
             FROM
                 '{self.path_prefix}/*.csv'
             WHERE
@@ -100,8 +107,7 @@ class OwnershipDB(DDB):
             LIMIT 10
         """)
                 .pl()
-                .to_series()
-                .to_list()
+                .to_dicts()
             )
         # If the table does not exist
         except duckdb.duckdb.IOException:

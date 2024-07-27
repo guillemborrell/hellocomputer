@@ -1,11 +1,10 @@
-from typing import List
+from typing import List, Dict
 from uuid import uuid4
 
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 from starlette.requests import Request
 
-from hellocomputer.config import StorageEngines
 from hellocomputer.db.users import OwnershipDB
 
 from ..auth import get_user_email
@@ -30,12 +29,7 @@ async def get_greeting() -> str:
 
 
 @router.get("/sessions")
-async def get_sessions(request: Request) -> List[str]:
+async def get_sessions(request: Request) -> List[Dict[str, str]]:
     user_email = get_user_email(request)
-    ownership = OwnershipDB(
-        StorageEngines.gcs,
-        gcs_access=settings.gcs_access,
-        gcs_secret=settings.gcs_secret,
-        bucket=settings.gcs_bucketname,
-    )
+    ownership = OwnershipDB(settings)
     return ownership.sessions(user_email)

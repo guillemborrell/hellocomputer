@@ -29,14 +29,14 @@ def test_user_exists():
 
 def test_assign_owner():
     assert (
-        OwnershipDB(settings).set_ownersip(
-            "something.something@something", "testsession", "test"
+        OwnershipDB(settings).set_ownership(
+            "test@test.com", "sid", "session_name", "record_id"
         )
-        == "testsession"
+        == "sid"
     )
 
 
 def test_get_sessions():
-    assert OwnershipDB(settings).sessions("something.something@something") == [
-        "testsession"
+    assert OwnershipDB(settings).sessions("test@test.com") == [
+        {"sid": "sid", "session_name": "session_name"}
     ]

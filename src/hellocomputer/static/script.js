@@ -155,7 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append('file', file);
 
         try {
-            const response = await fetch('/upload?sid=' + sessionStorage.getItem('helloComputerSession'), {
+            const sid = sessionStorage.getItem('helloComputerSession');
+            const session_name = document.getElementById('datasetLabel').value;
+            const response = await fetch(`/upload?sid=${sid}&session_name=${session_name}`, {
                 method: 'POST',
                 body: formData
             });
@@ -179,6 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     const sessionsButton = document.getElementById('loadSessionsButton');
     const sessions = document.getElementById('userSessions');
+    const loadResultDiv = document.getElementById('loadResultDiv');
 
     sessionsButton.addEventListener('click', async function fetchSessions() {
         try {
@@ -191,8 +194,12 @@ document.addEventListener("DOMContentLoaded", function () {
             data.forEach(item => {
                 const listItem = document.createElement('li');
                 const button = document.createElement('button');
-                button.textContent = item;
-                button.addEventListener("click", function () { alert(`You clicked on ${item}`); });
+                button.textContent = item.session_name;
+                button.addEventListener("click", function () {
+                    sessionStorage.setItem("helloComputerSession", item.sid);
+                    sessionStorage.setItem("helloComputerSessionLoaded", true);
+                    loadResultDiv.textContent = 'Session loaded';
+                });
                 listItem.appendChild(button);
                 sessions.appendChild(listItem);
             });

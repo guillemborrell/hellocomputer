@@ -5,9 +5,10 @@ from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from ..config import StorageEngines, settings
+from ..config import settings
 from ..db.sessions import SessionDB
 from ..db.users import OwnershipDB
+from ..auth import get_user_email
 
 router = APIRouter()
 
@@ -22,7 +23,12 @@ router = APIRouter()
 
 
 @router.post("/upload", tags=["files"])
-async def upload_file(request: Request, file: UploadFile = File(...), sid: str = ""):
+async def upload_file(
+    request: Request,
+    file: UploadFile = File(...),
+    sid: str = "",
+    session_name: str = "",
+):
     async with aiofiles.tempfile.NamedTemporaryFile("wb") as f:
         content = await file.read()
         await f.write(content)
@@ -30,22 +36,14 @@ async def upload_file(request: Request, file: UploadFile = File(...), sid: str =
 
         (
             SessionDB(
-                StorageEngines.gcs,
-                gcs_access=settings.gcs_access,
-                gcs_secret=settings.gcs_secret,
-                bucket=settings.gcs_bucketname,
+                settings,
                 sid=sid,
             )
             .load_xls(f.name)
             .dump()
         )
 
-        OwnershipDB(
-            StorageEngines.gcs,
-            gcs_access=settings.gcs_access,
-            gcs_secret=settings.gcs_secret,
-            bucket=settings.gcs_bucketname,
-        ).set_ownersip(request.session.get("user").get("email"), sid)
+        OwnershipDB(settings).set_ownership(get_user_email(request), sid, session_name)
 
         return JSONResponse(
             content={"message": "File uploaded successfully"}, status_code=200
