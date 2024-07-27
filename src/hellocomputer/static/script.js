@@ -172,6 +172,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const data = await response.text();
             uploadResultDiv.textContent = 'Upload successful: ' + JSON.parse(data)['message'];
+            setTimeout(function () {
+                uploadResultDiv.textContent = '';
+            }, 1000);
+
             sessionStorage.setItem("helloComputerSessionLoaded", true);
 
             addAIManualMessage('File uploaded and processed!');
@@ -192,6 +196,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadResultDiv = document.getElementById('loadResultDiv');
 
     sessionsButton.addEventListener('click', async function fetchSessions() {
+        // Display a loading message
+        sessions.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only"></span></div></div>';
+
         try {
             const response = await fetch('/sessions');
             if (!response.ok) {
@@ -200,19 +207,24 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = JSON.parse(await response.text());
             sessions.innerHTML = '';
             data.forEach(item => {
-                const listItem = document.createElement('li');
+                const row = document.createElement('div');
+                row.className = 'row mb-2';
                 const button = document.createElement('button');
                 button.textContent = item.session_name;
+                button.className = 'btn btn-primary btn-block';
                 button.addEventListener("click", function () {
                     sessionStorage.setItem("helloComputerSession", item.sid);
                     sessionStorage.setItem("helloComputerSessionLoaded", true);
                     loadResultDiv.textContent = 'Session loaded';
+                    setTimeout(function () {
+                        loadResultDiv.textContent = '';
+                    }, 1000);
                 });
-                listItem.appendChild(button);
-                sessions.appendChild(listItem);
+                row.appendChild(button);
+                sessions.appendChild(row);
             });
         } catch (error) {
-            sessions.innerHTML = 'Error: ' + error.message;
+            sessions.innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
         }
     }
     );
