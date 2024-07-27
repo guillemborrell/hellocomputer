@@ -151,6 +151,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Disable the upload button
+        uploadButton.disabled = true;
+        uploadButton.textContent = 'Uploading...';
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -173,6 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
             addAIManualMessage('File uploaded and processed!');
         } catch (error) {
             uploadResultDiv.textContent = 'Error: ' + error.message;
+        } finally {
+            // Re-enable the upload button
+            uploadButton.disabled = false;
+            uploadButton.textContent = 'Upload';
         }
     });
 });
