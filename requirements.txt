@@ -42,7 +42,7 @@ click==8.1.7
     # via
     #   typer
     #   uvicorn
-cryptography==42.0.8
+cryptography==43.0.0
     # via
     #   authlib
     #   pyjwt
@@ -60,7 +60,7 @@ duckdb-engine==0.13.0
     # via -r requirements.in
 email-validator==2.2.0
     # via fastapi
-fastapi==0.111.0
+fastapi==0.111.1
     # via -r requirements.in
 fastapi-cli==0.0.4
     # via fastapi
@@ -104,23 +104,29 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.7
+langchain==0.2.11
     # via
     #   -r requirements.in
     #   langchain-community
-langchain-community==0.2.7
+langchain-community==0.2.10
     # via -r requirements.in
-langchain-core==0.2.17
+langchain-core==0.2.24
     # via
     #   langchain
     #   langchain-community
     #   langchain-fireworks
+    #   langchain-openai
     #   langchain-text-splitters
+    #   langgraph
 langchain-fireworks==0.1.5
+    # via -r requirements.in
+langchain-openai==0.1.19
     # via -r requirements.in
 langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.85
+langgraph==0.1.15
+    # via -r requirements.in
+langsmith==0.1.93
     # via
     #   langchain
     #   langchain-community
@@ -144,14 +150,13 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   pyarrow
-openai==1.35.13
+openai==1.37.1
     # via
     #   -r requirements.in
     #   langchain-fireworks
+    #   langchain-openai
 orjson==3.10.6
-    # via
-    #   fastapi
-    #   langsmith
+    # via langsmith
 packaging==24.1
     # via
     #   duckdb-engine
@@ -159,14 +164,15 @@ packaging==24.1
     #   marshmallow
 pillow==10.4.0
     # via fireworks-ai
-polars==1.1.0
+polars==1.2.1
     # via -r requirements.in
-pyarrow==16.1.0
+pyarrow==17.0.0
     # via -r requirements.in
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
     # via
+    #   -r requirements.in
     #   fastapi
     #   fireworks-ai
     #   langchain
@@ -198,12 +204,15 @@ pyyaml==6.0.1
     #   langchain-community
     #   langchain-core
     #   uvicorn
+regex==2024.7.24
+    # via tiktoken
 requests==2.32.3
     # via
     #   langchain
     #   langchain-community
     #   langchain-fireworks
     #   langsmith
+    #   tiktoken
 rich==13.7.1
     # via typer
 s3fs==2024.6.1
@@ -230,6 +239,8 @@ tenacity==8.5.0
     #   langchain
     #   langchain-community
     #   langchain-core
+tiktoken==0.7.0
+    # via langchain-openai
 tqdm==4.66.4
     # via openai
 typer==0.12.3
@@ -245,13 +256,11 @@ typing-extensions==4.12.2
     #   typing-inspect
 typing-inspect==0.9.0
     # via dataclasses-json
-ujson==5.10.0
-    # via fastapi
 urllib3==2.2.2
     # via
     #   botocore
     #   requests
-uvicorn==0.30.1
+uvicorn==0.30.3
     # via fastapi
 uvloop==0.19.0
     # via uvicorn
