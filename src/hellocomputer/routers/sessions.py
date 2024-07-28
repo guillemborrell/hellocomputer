@@ -12,7 +12,7 @@ from ..config import settings
 
 # Scheme for the Authorization header
 
-router = APIRouter()
+router = APIRouter(tags=["sessions"])
 
 
 @router.get("/new_session")

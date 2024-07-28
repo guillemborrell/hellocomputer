@@ -6,7 +6,7 @@ from starlette.requests import Request
 from hellocomputer.config import StorageEngines, settings
 from hellocomputer.db.users import UserDB
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
 
 oauth = OAuth()
 oauth.register(

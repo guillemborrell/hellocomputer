@@ -10,7 +10,7 @@ from ..db.sessions import SessionDB
 from ..db.users import OwnershipDB
 from ..auth import get_user_email
 
-router = APIRouter()
+router = APIRouter(tags=["files"])
 
 
 # Configure the S3FS with your Google Cloud Storage credentials

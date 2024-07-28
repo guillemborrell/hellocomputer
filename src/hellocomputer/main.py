@@ -10,7 +10,7 @@ import hellocomputer
 
 from .auth import get_user
 from .config import settings
-from .routers import analysis, auth, files, health, sessions
+from .routers import auth, chat, files, health, sessions
 
 static_path = Path(hellocomputer.__file__).parent / "static"
 
@@ -36,7 +36,7 @@ async def favicon():
 app.include_router(health.router)
 app.include_router(sessions.router)
 app.include_router(files.router)
-app.include_router(analysis.router)
+app.include_router(chat.router)
 app.include_router(auth.router)
 app.mount(
     "/app",

@@ -8,7 +8,7 @@ from hellocomputer.graph import app
 router = APIRouter()
 
 
-@router.get("/query", response_class=PlainTextResponse, tags=["queries"])
+@router.get("/query", response_class=PlainTextResponse, tags=["chat"])
 async def query(request: Request, sid: str = "", q: str = "") -> str:
     user = request.session.get("user")  # noqa
     response = await app.ainvoke({"messages": [HumanMessage(content=q)]})
