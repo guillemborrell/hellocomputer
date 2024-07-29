@@ -166,4 +166,3 @@ test/data/output/*
 
 .pytest_cache
 .ruff_cache
-*.ipynb

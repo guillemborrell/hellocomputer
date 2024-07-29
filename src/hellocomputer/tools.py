@@ -15,16 +15,19 @@ class DuckdbQueryInput(BaseModel):
 class DuckdbQueryTool(BaseTool):
     name: str = "sql_query"
     description: str = "Run a SQL query in the database containing all the datasets "
-    "and provide a summary of the results"
+    "and provide a summary of the results, and the name of the table with them if the "
+    "volume of the results is large"
     args_schema: Type[BaseModel] = DuckdbQueryInput
 
     def _run(self, query: str, session_id: str) -> str:
         """Run the query"""
-        db = SessionDB(settings, session_id)
+        session = SessionDB(settings, session_id)
+        session.db.sql(query)
 
     async def _arun(self, query: str, session_id: str) -> str:
         """Use the tool asynchronously."""
-        db = SessionDB(settings, session_id)
+        session = SessionDB(settings, session_id)
+        session.db.sql(query)
         return "Table"
 
 
