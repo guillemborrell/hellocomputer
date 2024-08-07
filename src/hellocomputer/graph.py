@@ -5,9 +5,11 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from hellocomputer.nodes import (
     intent,
     answer_general,
-    answer_query,
     answer_visualization,
 )
+from hellocomputer.config import settings
+
+from hellocomputer.tools.db import SQLSubgraph
 
 
 def route_intent(state: MessagesState) -> Literal["general", "query", "visualization"]:
@@ -22,7 +24,6 @@ workflow = StateGraph(MessagesState)
 
 workflow.add_node("intent", intent)
 workflow.add_node("answer_general", answer_general)
-workflow.add_node("answer_query", answer_query)
 workflow.add_node("answer_visualization", answer_visualization)
 
 # Edges
@@ -38,7 +39,12 @@ workflow.add_conditional_edges(
     },
 )
 workflow.add_edge("answer_general", END)
-workflow.add_edge("answer_query", END)
 workflow.add_edge("answer_visualization", END)
+
+# SQL Subgraph
+
+workflow = SQLSubgraph().add_subgraph(
+    workflow=workflow, origin="intent", destination=END
+)
 
 app = workflow.compile()

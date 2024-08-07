@@ -3,16 +3,18 @@ from pathlib import Path
 
 import duckdb
 from langchain_community.utilities.sql_database import SQLDatabase
+from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
+from langchain_openai import ChatOpenAI
 from typing_extensions import Self
 
-from hellocomputer.config import Settings, StorageEngines
+from hellocomputer.config import Settings, settings, StorageEngines
+from hellocomputer.models import AvailableModels
 
 from . import DDB
 
 
 class SessionDB(DDB):
-    def __init__(self, settings: Settings, sid: str):
-        super().__init__(settings=settings)
+    def set_session(self, sid):
         self.sid = sid
         # Override storage engine for sessions
         if settings.storage_engine == StorageEngines.gcs:
@@ -171,3 +173,13 @@ class SessionDB(DDB):
     @property
     def llmsql(self):
         return SQLDatabase(self.engine, ignore_tables=["metadata"])
+
+    @property
+    def sql_toolkit(self) -> SQLDatabaseToolkit:
+        llm = ChatOpenAI(
+            base_url=settings.llm_base_url,
+            api_key=settings.llm_api_key,
+            model=AvailableModels.llama_medium,
+            temperature=0.3,
+        )
+        return SQLDatabaseToolkit(db=self.llmsql, llm=llm)
