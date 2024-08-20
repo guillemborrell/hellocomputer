@@ -1,12 +1,13 @@
-from typing import Type
+from typing import Type, Literal
 
 from langchain.tools import BaseTool
 from langgraph.prebuilt import ToolNode
-from langgraph.graph import MessagesState, StateGraph
+from langgraph.graph import StateGraph
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
 from hellocomputer.config import settings
+from hellocomputer.state import SidState
 from hellocomputer.db.sessions import SessionDB
 from hellocomputer.models import AvailableModels
 
@@ -44,8 +45,12 @@ class SQLSubgraph:
     queries
     """
 
-    async def call_model(self, state: MessagesState):
-        db = SessionDB(settings=settings)
+    @property
+    def start_node(self):
+        return "sql_agent"
+
+    async def call_model(self, state: SidState):
+        db = SessionDB(settings=settings).set_session(state.sid)
         sql_toolkit = db.sql_toolkit
 
         agent_llm = ChatOpenAI(
@@ -66,7 +71,7 @@ class SQLSubgraph:
         sql_toolkit = db.sql_toolkit
         return ToolNode(sql_toolkit.get_tools())
 
-    def add_subgraph(
+    def add_nodes_edges(
         self, workflow: StateGraph, origin: str, destination: str
     ) -> StateGraph:
         """Creates the nodes and edges of the subgraph given a workflow
@@ -80,7 +85,7 @@ class SQLSubgraph:
             StateGraph: Resulting workflow
         """
 
-        def should_continue(state: MessagesState):
+        def should_continue(state: SidState):
             messages = state["messages"]
             last_message = messages[-1]
             if last_message.tool_calls:
@@ -90,7 +95,7 @@ class SQLSubgraph:
         workflow.add_node("sql_agent", self.call_model)
         workflow.add_node("sql_tool_node", self.query_tool_node)
         workflow.add_edge(origin, "sql_agent")
-        workflow.add_conditional_edges("agent", should_continue)
+        workflow.add_conditional_edges("sql_agent", should_continue)
         workflow.add_edge("sql_agent", "sql_tool_node")
 
         return workflow

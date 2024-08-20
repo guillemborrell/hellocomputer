@@ -7,7 +7,7 @@ from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain_openai import ChatOpenAI
 from typing_extensions import Self
 
-from hellocomputer.config import Settings, settings, StorageEngines
+from hellocomputer.config import settings, StorageEngines
 from hellocomputer.models import AvailableModels
 
 from . import DDB
@@ -172,7 +172,9 @@ class SessionDB(DDB):
 
     @property
     def llmsql(self):
-        return SQLDatabase(self.engine, ignore_tables=["metadata"])
+        return SQLDatabase(
+            self.engine
+        )  ## Cannot ignore tables because it creates a connection at import time
 
     @property
     def sql_toolkit(self) -> SQLDatabaseToolkit:

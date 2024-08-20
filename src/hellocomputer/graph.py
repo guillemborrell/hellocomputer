@@ -1,24 +1,35 @@
 from typing import Literal
+from langgraph.graph import END, START, StateGraph
 
-from langgraph.graph import END, START, MessagesState, StateGraph
 
 from hellocomputer.nodes import (
     intent,
     answer_general,
     answer_visualization,
 )
-from hellocomputer.config import settings
 
+from hellocomputer.tools import extract_sid
 from hellocomputer.tools.db import SQLSubgraph
+from hellocomputer.db.sessions import SessionDB
+from hellocomputer.state import SidState
 
 
-def route_intent(state: MessagesState) -> Literal["general", "query", "visualization"]:
+def route_intent(state: SidState) -> Literal["general", "query", "visualization"]:
     messages = state["messages"]
     last_message = messages[-1]
     return last_message.content
 
 
-workflow = StateGraph(MessagesState)
+def get_sid(state: SidState) -> Literal["ok"]:
+    print(state["messages"])
+    last_message = state["messages"][-1]
+    sid = extract_sid(last_message)
+    state.sid = SessionDB(sid)
+
+
+sql_subgraph = SQLSubgraph()
+
+workflow = StateGraph(SidState)
 
 # Nodes
 
@@ -27,14 +38,13 @@ workflow.add_node("answer_general", answer_general)
 workflow.add_node("answer_visualization", answer_visualization)
 
 # Edges
-
 workflow.add_edge(START, "intent")
 workflow.add_conditional_edges(
     "intent",
     route_intent,
     {
         "general": "answer_general",
-        "query": "answer_query",
+        "query": sql_subgraph.start_node,
         "visualization": "answer_visualization",
     },
 )
@@ -43,7 +53,7 @@ workflow.add_edge("answer_visualization", END)
 
 # SQL Subgraph
 
-workflow = SQLSubgraph().add_subgraph(
+workflow = sql_subgraph.add_nodes_edges(
     workflow=workflow, origin="intent", destination=END
 )
 
